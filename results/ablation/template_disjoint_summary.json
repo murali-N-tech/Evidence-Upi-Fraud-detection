@@ -1,0 +1,660 @@
+{
+  "what": "Message-template leakage control: train/val and test rows use disjoint template halves and the coercion weights are refitted on the training half only.",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "summary": {
+    "E_core+message": {
+      "pr_auc": {
+        "disjoint_mean": 0.5576479918981336,
+        "disjoint_std": 0.028459479546054635,
+        "standard_mean": 0.5573146512288183,
+        "standard_std": 0.02791149006800655,
+        "paired_delta_pp_mean": 0.03333406693154184,
+        "paired_delta_pp_std": 0.9149148755850304,
+        "seeds_lower_when_disjoint": 4
+      },
+      "recall": {
+        "disjoint_mean": 0.5986344653997804,
+        "disjoint_std": 0.02589395075514118,
+        "standard_mean": 0.5950840250836349,
+        "standard_std": 0.03392688571208132,
+        "paired_delta_pp_mean": 0.3550440316145531,
+        "paired_delta_pp_std": 1.8802992428374015,
+        "seeds_lower_when_disjoint": 5
+      },
+      "recall_social_engineering": {
+        "disjoint_mean": 0.41141152350695115,
+        "disjoint_std": 0.025322524558858514,
+        "standard_mean": 0.40535852410193013,
+        "standard_std": 0.034465781734338855,
+        "paired_delta_pp_mean": 0.6052999405021053,
+        "paired_delta_pp_std": 2.891856464891767,
+        "seeds_lower_when_disjoint": 3
+      },
+      "roc_auc": {
+        "disjoint_mean": 0.9621933101994692,
+        "disjoint_std": 0.003919181862648191
+      },
+      "fpr": {
+        "disjoint_mean": 0.010148266541046717,
+        "disjoint_std": 0.0008543017603672838
+      },
+      "precision": {
+        "disjoint_mean": 0.41823621672357714,
+        "disjoint_std": 0.031275318273596475
+      },
+      "f1": {
+        "disjoint_mean": 0.492043150414845,
+        "disjoint_std": 0.027861506144443944
+      },
+      "brier": {
+        "disjoint_mean": 0.007445726314209804,
+        "disjoint_std": 0.0003410282570221215
+      }
+    },
+    "I_core+rel+graph+msg": {
+      "pr_auc": {
+        "disjoint_mean": 0.6815056611596706,
+        "disjoint_std": 0.02349788464193618,
+        "standard_mean": 0.6839587134219948,
+        "standard_std": 0.026357911349969582,
+        "paired_delta_pp_mean": -0.24530522623241513,
+        "paired_delta_pp_std": 1.2037908995896085,
+        "seeds_lower_when_disjoint": 4
+      },
+      "recall": {
+        "disjoint_mean": 0.716918064716611,
+        "disjoint_std": 0.02740035836454867,
+        "standard_mean": 0.7264867935256796,
+        "standard_std": 0.023996572186483225,
+        "paired_delta_pp_mean": -0.956872880906844,
+        "paired_delta_pp_std": 1.718867305361819,
+        "seeds_lower_when_disjoint": 5
+      },
+      "recall_social_engineering": {
+        "disjoint_mean": 0.5597113041859578,
+        "disjoint_std": 0.03657464913737491,
+        "standard_mean": 0.5678669668703067,
+        "standard_std": 0.03024331118758849,
+        "paired_delta_pp_mean": -0.8155662684348863,
+        "paired_delta_pp_std": 2.1230405246316595,
+        "seeds_lower_when_disjoint": 5
+      },
+      "roc_auc": {
+        "disjoint_mean": 0.9857276442983831,
+        "disjoint_std": 0.0018783330373015664
+      },
+      "fpr": {
+        "disjoint_mean": 0.009561507900290218,
+        "disjoint_std": 0.0009374169669353963
+      },
+      "precision": {
+        "disjoint_mean": 0.47759000157693937,
+        "disjoint_std": 0.026812870100295736
+      },
+      "f1": {
+        "disjoint_mean": 0.5729153597427608,
+        "disjoint_std": 0.023820405077067404
+      },
+      "brier": {
+        "disjoint_mean": 0.00613424220885469,
+        "disjoint_std": 0.00030338479287565025
+      }
+    },
+    "K_full_v2": {
+      "pr_auc": {
+        "disjoint_mean": 0.7154569782285993,
+        "disjoint_std": 0.021918105852026522,
+        "standard_mean": 0.7196082225289658,
+        "standard_std": 0.022767895665025673,
+        "paired_delta_pp_mean": -0.41512443003666416,
+        "paired_delta_pp_std": 0.7149551714811527,
+        "seeds_lower_when_disjoint": 7
+      },
+      "recall": {
+        "disjoint_mean": 0.755113233406445,
+        "disjoint_std": 0.026457444160906694,
+        "standard_mean": 0.756592088227635,
+        "standard_std": 0.0315694037453929,
+        "paired_delta_pp_mean": -0.14788548211900787,
+        "paired_delta_pp_std": 1.2575287221766414,
+        "seeds_lower_when_disjoint": 5
+      },
+      "recall_social_engineering": {
+        "disjoint_mean": 0.6225110307802681,
+        "disjoint_std": 0.036749739967668296,
+        "standard_mean": 0.6236415052452691,
+        "standard_std": 0.04482867833267326,
+        "paired_delta_pp_mean": -0.11304744650007525,
+        "paired_delta_pp_std": 1.4897330653215193,
+        "seeds_lower_when_disjoint": 4
+      },
+      "roc_auc": {
+        "disjoint_mean": 0.9877402786302799,
+        "disjoint_std": 0.0022812994256822287
+      },
+      "fpr": {
+        "disjoint_mean": 0.010141741502205318,
+        "disjoint_std": 0.0010748071195609775
+      },
+      "precision": {
+        "disjoint_mean": 0.4759560984903616,
+        "disjoint_std": 0.026994273738115894
+      },
+      "f1": {
+        "disjoint_mean": 0.5834474062252262,
+        "disjoint_std": 0.023727836468697725
+      },
+      "brier": {
+        "disjoint_mean": 0.005766667418852217,
+        "disjoint_std": 0.00032064437738400575
+      }
+    }
+  },
+  "per_seed": {
+    "42": {
+      "test_template_seen_in_train_standard": 0.9988404028074458,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65797,
+      "rows_template_swapped": 32881,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.26019452956040223,
+          "urgency": 2.4193242504667882,
+          "fear": 2.5535581757412125,
+          "pay_request": 3.6300528743875518,
+          "credential_request": 0.3705428395297203,
+          "secrecy": 3.640909529552603,
+          "remote_control": 2.4241302993649585,
+          "verify_payment": 1.5548865408481936,
+          "lure": 2.94078351689261,
+          "contact_offline": 2.2920101747329014
+        },
+        "intercept": -5.1277330077809475,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "43": {
+      "test_template_seen_in_train_standard": 0.9995138255849286,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65872,
+      "rows_template_swapped": 32966,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": -0.08879922665219915,
+          "urgency": 2.7037737862292923,
+          "fear": 2.2776039369589083,
+          "pay_request": 3.52343855625283,
+          "credential_request": 0.6574743412382058,
+          "secrecy": 3.559824423138319,
+          "remote_control": 2.333947257304728,
+          "verify_payment": 1.5729030620694606,
+          "lure": 3.1812822087030064,
+          "contact_offline": 2.0943719743716946
+        },
+        "intercept": -4.936987504514946,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "44": {
+      "test_template_seen_in_train_standard": 0.9995126408772464,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65593,
+      "rows_template_swapped": 33100,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.10207232732474573,
+          "urgency": 2.8049234766867377,
+          "fear": 2.5087862396016845,
+          "pay_request": 3.847892449522146,
+          "credential_request": 0.28916060592075904,
+          "secrecy": 3.391165950021014,
+          "remote_control": 2.684127480369316,
+          "verify_payment": 1.6111488016220354,
+          "lure": 3.1120709927965757,
+          "contact_offline": 2.2164561643692355
+        },
+        "intercept": -5.152832692200772,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "45": {
+      "test_template_seen_in_train_standard": 0.9993923189110355,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65969,
+      "rows_template_swapped": 33158,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": -0.02142184541452752,
+          "urgency": 2.432361507524748,
+          "fear": 2.717296420555082,
+          "pay_request": 3.487093361836007,
+          "credential_request": 0.47036757655801514,
+          "secrecy": 3.6966974063970937,
+          "remote_control": 2.4247061198120656,
+          "verify_payment": 1.611887755056897,
+          "lure": 3.1135621232385065,
+          "contact_offline": 2.197550949589658
+        },
+        "intercept": -4.933486252172235,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "46": {
+      "test_template_seen_in_train_standard": 0.9998786775856839,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65965,
+      "rows_template_swapped": 33002,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.22707252826060206,
+          "urgency": 2.3543374935732024,
+          "fear": 2.5883254063874555,
+          "pay_request": 3.7762805328628275,
+          "credential_request": 0.49535300235436824,
+          "secrecy": 3.642649699977913,
+          "remote_control": 2.510943600126645,
+          "verify_payment": 1.489730934745644,
+          "lure": 3.176822022564633,
+          "contact_offline": 2.3166684795227765
+        },
+        "intercept": -5.256082481051734,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "47": {
+      "test_template_seen_in_train_standard": 0.9995785924989464,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65999,
+      "rows_template_swapped": 33246,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.03271607868566338,
+          "urgency": 2.765727613584854,
+          "fear": 2.4741152850406336,
+          "pay_request": 3.748444066413302,
+          "credential_request": 0.22769249513528161,
+          "secrecy": 3.241094352812189,
+          "remote_control": 2.4160865481500062,
+          "verify_payment": 1.6290988355560432,
+          "lure": 3.1254518562155664,
+          "contact_offline": 2.2481321810585815
+        },
+        "intercept": -5.0833968139168855,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "48": {
+      "test_template_seen_in_train_standard": 0.9996353913466213,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65802,
+      "rows_template_swapped": 33163,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.19058966994001983,
+          "urgency": 2.542821549985098,
+          "fear": 2.450769161188862,
+          "pay_request": 3.650311590380081,
+          "credential_request": 0.29494105142169974,
+          "secrecy": 3.438477856611497,
+          "remote_control": 2.4892356352507212,
+          "verify_payment": 1.724621121387246,
+          "lure": 2.918109962556947,
+          "contact_offline": 2.1269896924308243
+        },
+        "intercept": -5.056598861126892,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "49": {
+      "test_template_seen_in_train_standard": 0.9998779818192911,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 66046,
+      "rows_template_swapped": 33501,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": -0.12207293738882319,
+          "urgency": 2.8305773839455823,
+          "fear": 2.4679743586382594,
+          "pay_request": 3.7435679970393063,
+          "credential_request": 0.294962695187829,
+          "secrecy": 3.8209872328137386,
+          "remote_control": 1.5116783597759953,
+          "verify_payment": 1.5060676845206094,
+          "lure": 2.744348863124953,
+          "contact_offline": 2.114179167657229
+        },
+        "intercept": -4.993478154300571,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "50": {
+      "test_template_seen_in_train_standard": 0.9993944165203174,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 66183,
+      "rows_template_swapped": 33005,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.2748495569191437,
+          "urgency": 2.7806404612487756,
+          "fear": 2.330585001232729,
+          "pay_request": 3.8028195874181123,
+          "credential_request": 0.3559378552988139,
+          "secrecy": 3.2409986567287548,
+          "remote_control": 2.0685300018963217,
+          "verify_payment": 1.51429613313848,
+          "lure": 3.170486139551174,
+          "contact_offline": 2.408242571661843
+        },
+        "intercept": -5.243733820679104,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    },
+    "51": {
+      "test_template_seen_in_train_standard": 0.9998772629640994,
+      "test_template_seen_in_train_disjoint": 0.0,
+      "rows_with_message": 65962,
+      "rows_template_swapped": 33095,
+      "coercion_refit_on_A": {
+        "feature_order": [
+          "authority",
+          "urgency",
+          "fear",
+          "pay_request",
+          "credential_request",
+          "secrecy",
+          "remote_control",
+          "verify_payment",
+          "lure",
+          "contact_offline"
+        ],
+        "coefficients": {
+          "authority": 0.16408273029013082,
+          "urgency": 2.5904532102048656,
+          "fear": 2.4513006697703514,
+          "pay_request": 3.572265451271378,
+          "credential_request": 0.6571251750976672,
+          "secrecy": 3.5911701054402183,
+          "remote_control": 2.4748850518512113,
+          "verify_payment": 1.7204797070492706,
+          "lure": 2.9819367284914313,
+          "contact_offline": 2.0961631374646963
+        },
+        "intercept": -5.073150218676649,
+        "threshold": 0.16
+      },
+      "partition_sizes": {
+        "scam": {
+          "A": 182,
+          "B": 182
+        },
+        "hard_negative": {
+          "A": 278,
+          "B": 279
+        },
+        "easy_negative": {
+          "A": 50,
+          "B": 51
+        }
+      }
+    }
+  },
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "source": {
+    "python_source_sha256": "4c56538fa7dfaeb86917c0a1fe6eda9181fc0edf7ce6903f358359c83bc3b594",
+    "n_files": 85,
+    "git_head_of_snapshot": "9022a9feb65effa32779207e32458c0d37e9bb61"
+  }
+}

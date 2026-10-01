@@ -174,7 +174,21 @@ def parse_upi_target(payload: str) -> QrAnalysis:
 
     # 5. Display name that does not match the address being paid. This is the
     #    signature of a sticker pasted over a real shop's QR.
-    if result.payee_name and result.vpa_analysis and result.vpa_analysis.valid:
+    #    Not for a phone-style address. "9000000000@ybl" carries no name at
+    #    all, so any displayed name "fails" to match it - a person's QR from
+    #    their own UPI app raised a HIGH mismatch on every scan. There is
+    #    nothing to compare, which is information, not evidence.
+    from backend.app.ingestion.identity import is_phone_style
+
+    phone_style = bool(result.vpa_analysis and is_phone_style(result.vpa_analysis.local))
+    if result.payee_name and result.vpa_analysis and result.vpa_analysis.valid and phone_style:
+        result.findings.append(
+            VpaFinding("name_not_comparable", "info",
+                       f"The QR shows the name '{result.payee_name}'. The address is a "
+                       f"phone number, so that name cannot be checked against it - "
+                       f"confirm the name your UPI app shows before paying.")
+        )
+    elif result.payee_name and result.vpa_analysis and result.vpa_analysis.valid:
         local = canonical(result.vpa_analysis.local)
         shown = canonical(result.payee_name)
         if shown and local and shown not in local and local not in shown:

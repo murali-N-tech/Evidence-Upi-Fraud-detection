@@ -1,0 +1,9 @@
+SYNTHETIC FIXTURE - GPay-like layout - not a real export
+Date,Time,Name,UPI ID,Type,Amount (INR),UPI Transaction ID,Status
+05/07/2026,09:15 AM,SYNTH TEA STALL,synthtea.stall@okaxis,Paid,20.00,610000000001,Completed
+05/07/2026,09:15 AM,SYNTH TEA STALL,synthtea.stall@okaxis,Paid,20.00,610000000002,Completed
+06/07/2026,13:40,SYNTH GROCERY,synth.grocery@okhdfcbank,Paid,"1,245.50",610000000003,Completed
+07/07/2026,18:02,SYNTH FRIEND A,9000000101@okicici,Received,500.00,610000000004,Completed
+08/07/2026,20:10,SYNTH GROCERY,  "SYNTH.GROCERY@OKHDFCBANK" ,Paid,310.00,610000000005,Completed
+09/07/2026,11:00,SYNTH SHOP,synth.shop@oksbi,Paid,99.00,610000000006,Failed
+10/07/2026,10:30,SYNTH GROCER,synth grocer@okhdfcbank,Paid,55.00,610000000007,Completed

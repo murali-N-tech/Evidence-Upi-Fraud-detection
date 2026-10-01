@@ -1,0 +1,106 @@
+{
+  "seed": 44,
+  "n_transactions": 60000,
+  "fraud": 720,
+  "db": "/home/claude/exp/_work/replay_seed44.db",
+  "seconds": 5654.5,
+  "design": {
+    "window_days": 150,
+    "n_payers": 2000,
+    "n_merchants": 900,
+    "late_opening_merchant_share": 0.3,
+    "merchant_popularity": "Zipf-like weights w_i = 1 / (rank_i ** 1.05)",
+    "qr_share_for_merchant_payments": 0.5,
+    "fraud_rate_target": 0.012,
+    "scenario_mix": {
+      "social_engineering": 0.5,
+      "mule_collection": 0.22,
+      "account_takeover": 0.2,
+      "card_testing": 0.08
+    },
+    "social_engineering": {
+      "victims_per_collector": "Poisson(7)+2",
+      "active_window_days": "gamma(2, 6)",
+      "aged_collector_share": 0.35,
+      "aged_collector": "an existing low-popularity merchant address (bought/stolen)",
+      "brand_lure_handle_share_of_fresh": 0.3,
+      "qr_with_other_display_name_share": 0.2
+    },
+    "mule_collection": {
+      "accounts_per_ring": "3-4",
+      "victims_per_ring": "20-45",
+      "ring_window_days": "gamma(1.6, 2.5) clipped to [1, 20]",
+      "victim_pays_two_ring_accounts": 0.6
+    },
+    "account_takeover": {
+      "burst_payments": "1-3 within minutes",
+      "to_previously_paid_payee": 0.25,
+      "hours": "as dataset._account_takeover"
+    },
+    "card_testing": {
+      "probes_per_event": "3-8 within minutes",
+      "amount": "uniform(1, 25)",
+      "testing_payees_shared": true
+    },
+    "observation": "every executed payment is confirmed and recorded AFTER its assessment"
+  },
+  "online_checks": {
+    "10_store_contains_only_earlier_payments": {
+      "checked": 60000,
+      "violations": 0,
+      "examples": []
+    },
+    "1_first_pair_is_new": {
+      "checked": 60000,
+      "violations": 0,
+      "examples": []
+    },
+    "2_prior_pair_count_matches_earlier_rows": {
+      "checked": 60000,
+      "violations": 0,
+      "examples": []
+    },
+    "3_distinct_payers_only_prior": {
+      "checked": 60000,
+      "violations": 0,
+      "examples": []
+    },
+    "7_unobserved_payee_graph_unavailable_not_zero": {
+      "checked": 12296,
+      "violations": 0,
+      "examples": []
+    },
+    "4_arrival_window_only_prior": {
+      "checked": 47704,
+      "violations": 0,
+      "examples": []
+    },
+    "5_component_is_pre_payment": {
+      "checked": 47704,
+      "violations": 0,
+      "examples": []
+    },
+    "6_position_finding_only_when_gates_hold": {
+      "checked": 47704,
+      "violations": 0,
+      "examples": []
+    }
+  },
+  "corpus_sha256": "110a61a13596f3169ba012d3584734b1d741ef915e1c7eeb36608e7280a55071",
+  "evidence_sha256": "6a0c20d8d24c4387fdfefa4751481d111defc6bccfa605279bd66e8774771ea6",
+  "clock_injection": "backend.app.core.clock.now_app -> replay time t",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "source": {
+    "python_source_sha256": "acef8ba660bea9872f59f5d0cb3cafb36e72bf4e903d4a5efb12afdd1123c9ab",
+    "n_files": 86,
+    "git_head_of_snapshot": "9022a9feb65effa32779207e32458c0d37e9bb61"
+  }
+}

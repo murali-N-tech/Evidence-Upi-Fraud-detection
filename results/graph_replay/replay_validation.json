@@ -1,0 +1,132 @@
+{
+  "what": "Replay validation tests 1-10 across seeds; per-seed detail in replay_validation_seed<S>.json.",
+  "order": "assess at t from state < t, then record_payment (confirm) - never the reverse",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "tests": {
+    "10_store_contains_only_earlier_payments": {
+      "checked": 180000,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "1_first_pair_is_new": {
+      "checked": 180000,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "2_prior_pair_count_matches_earlier_rows": {
+      "checked": 180000,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "3_distinct_payers_only_prior": {
+      "checked": 180000,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "7_unobserved_payee_graph_unavailable_not_zero": {
+      "checked": 37366,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "4_arrival_window_only_prior": {
+      "checked": 142634,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "5_component_is_pre_payment": {
+      "checked": 142634,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "6_position_finding_only_when_gates_hold": {
+      "checked": 142634,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "8_independent_rebuild_prior_only_identical": {
+      "checked": 165,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    },
+    "9a_earlier_observations_not_rewritten": {
+      "checked": 90000,
+      "violations": 0,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "pass": true
+    }
+  },
+  "all_pass": true,
+  "power_probe_9b": {
+    "42": {
+      "sampled": 51,
+      "differs_when_future_visible": 51,
+      "share": 1.0,
+      "reading": "share of sampled payments whose assessment would change if the shared store contained the future; shows the boundary is material"
+    },
+    "43": {
+      "sampled": 54,
+      "differs_when_future_visible": 54,
+      "share": 1.0,
+      "reading": "share of sampled payments whose assessment would change if the shared store contained the future; shows the boundary is material"
+    },
+    "44": {
+      "sampled": 60,
+      "differs_when_future_visible": 60,
+      "share": 1.0,
+      "reading": "share of sampled payments whose assessment would change if the shared store contained the future; shows the boundary is material"
+    }
+  }
+}

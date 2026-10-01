@@ -1,0 +1,10 @@
+SYNTHETIC BANK - STATEMENT OF ACCOUNT (not a real bank export)
+Account No,XXXXXXXX1234
+Period,01/07/2026 to 31/07/2026
+
+Txn Date,Narration,Chq/Ref No,Withdrawal Amt,Deposit Amt,Closing Balance
+02/07/26,UPI/DR/618300000001/SYNTH MART/synth.mart@okaxis/Groceries,618300000001,"2,000.00",,"48,000.00"
+03/07/26,UPI/CR/618300000002/SYNTH EMPLOYER/payroll,618300000002,,"30,000.00","78,000.00"
+04/07/26,NEFT-SYNTH LANDLORD-RENT,N18400000003,"15,000.00",,"63,000.00"
+Txn Date,Narration,Chq/Ref No,Withdrawal Amt,Deposit Amt,Closing Balance
+05/07/26,UPI/DR/618300000004/SYNTH MART/synth.mart@okaxis/Groceries,618300000004,650.00,,"62,350.00"

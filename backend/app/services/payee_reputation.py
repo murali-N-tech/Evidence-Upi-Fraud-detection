@@ -33,6 +33,23 @@ def _utcnow() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _app_now_iso() -> str:
+    from backend.app.core.clock import now_app
+
+    return now_app().isoformat(timespec="microseconds")
+
+
+def iso_moment(value: Any) -> Optional[str]:
+    """One text format for every stored payment time: naive IST ISO.
+
+    See backend/app/core/clock.py. A naive value is IST wall time (statement
+    convention); an aware one is converted to IST. Never the server's zone.
+    """
+    from backend.app.core.clock import app_iso
+
+    return app_iso(value)
+
+
 def _ensure_schema(conn: sqlite3.Connection) -> None:
     conn.execute(
         """
@@ -77,6 +94,38 @@ def _ensure_schema(conn: sqlite3.Connection) -> None:
         """
     )
     conn.execute("CREATE INDEX IF NOT EXISTS ix_payers_vpa ON payee_payers(vpa)")
+    # One row per observed payment, with where it came from. This is the
+    # ledger payee_history() reads, and the idempotency guard for imports:
+    # an observation_key (a statement row's fingerprint) is counted once per
+    # payer however many times the statement is uploaded. The aggregate
+    # tables above are derived from the rows with in_aggregate = 1.
+    #
+    # provenance is SYSTEM_CONFIRMED / STATEMENT_OBSERVED / OTHER_OBSERVED.
+    # None of them means "verified by the PSP or NPCI" - there is no such
+    # feed here, and nothing reads this column as if there were.
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS payment_observations (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            payer_id        TEXT NOT NULL,
+            vpa             TEXT NOT NULL,
+            amount          REAL,
+            at              TEXT,              -- NULL when the source had no date
+            provenance      TEXT NOT NULL,
+            observation_key TEXT,
+            in_aggregate    INTEGER NOT NULL DEFAULT 1,
+            created_at      TEXT NOT NULL
+        )
+        """
+    )
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS ux_obs_key "
+        "ON payment_observations(payer_id, observation_key) WHERE observation_key IS NOT NULL"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS ix_obs_pair ON payment_observations(payer_id, vpa)"
+    )
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_obs_vpa ON payment_observations(vpa)")
     # Graph structures live alongside the edges they are derived from, and are
     # written in the same transaction, so they cannot disagree with them.
     from backend.app.services.graph_cache import ensure_schema as _graph_schema
@@ -121,6 +170,9 @@ class PayeeReputation:
     amount_spread: Optional[float] = None   # coefficient of variation
     reports: int = 0
     blocked: bool = False
+    # Distinct payers per provenance. Aggregate counts only - never who, when
+    # or how much - so it can be shown to any payer.
+    observed_by: dict[str, int] = field(default_factory=dict)
     findings: list[VpaFinding] = field(default_factory=list)
 
     @property
@@ -143,6 +195,7 @@ class PayeeReputation:
             "amount_spread": round(self.amount_spread, 3) if self.amount_spread is not None else None,
             "reports": self.reports,
             "blocked": self.blocked,
+            "observed_by": dict(self.observed_by),
         }
 
 
@@ -154,16 +207,25 @@ def record_payment(
     display_name: Optional[str] = None,
     conn: Optional[sqlite3.Connection] = None,
     autocommit: bool = True,
-) -> None:
-    """Fold one payment into the payee's aggregates.
+    provenance: str = "OTHER_OBSERVED",
+    observation_key: Optional[str] = None,
+    timed: bool = True,
+) -> bool:
+    """Record one observed payment. Returns False when it was already counted.
 
     Pass autocommit=False when loading in bulk and committing once; a commit
     per payment is thousands of fsyncs.
+
+    `observation_key` makes the call idempotent per payer: the same key is
+    counted once, so re-importing a statement cannot inflate reputation.
+    `timed=False` is a payment whose date the source did not give: it is
+    recorded in this payer's own ledger (they did pay this payee) but kept
+    out of the dated aggregates and the graph, which are chronological.
     """
     key = normalise_vpa(vpa)
     if not key:
-        return
-    when = at or _utcnow()
+        return False
+    when = (iso_moment(at) or at or _utcnow()) if timed else None
     amount = float(amount or 0)
 
     own = conn is None
@@ -172,40 +234,23 @@ def record_payment(
         if autocommit:
             conn.execute("BEGIN")
         try:
-            conn.execute(
-                """
-                INSERT INTO payee_reputation
-                    (vpa, display_name, first_seen, last_seen, payment_count,
-                     total_amount, sum_sq_amount, min_amount, max_amount)
-                VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?)
-                ON CONFLICT(vpa) DO UPDATE SET
-                    display_name  = COALESCE(payee_reputation.display_name, excluded.display_name),
-                    first_seen    = MIN(payee_reputation.first_seen, excluded.first_seen),
-                    last_seen     = MAX(payee_reputation.last_seen, excluded.last_seen),
-                    payment_count = payee_reputation.payment_count + 1,
-                    total_amount  = payee_reputation.total_amount + excluded.total_amount,
-                    sum_sq_amount = payee_reputation.sum_sq_amount + excluded.sum_sq_amount,
-                    min_amount    = MIN(COALESCE(payee_reputation.min_amount, excluded.min_amount), excluded.min_amount),
-                    max_amount    = MAX(COALESCE(payee_reputation.max_amount, excluded.max_amount), excluded.max_amount)
-                """,
-                (key, display_name, when, when, amount, amount * amount, amount, amount),
+            cur = conn.execute(
+                "INSERT OR IGNORE INTO payment_observations "
+                "(payer_id, vpa, amount, at, provenance, observation_key, in_aggregate, created_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (payer_id, key, amount, when, str(getattr(provenance, "value", provenance)),
+                 observation_key, 1 if timed else 0, _app_now_iso()),
             )
-            conn.execute(
-                """
-                INSERT INTO payee_payers (vpa, payer_id, payments, first_at, last_at)
-                VALUES (?, ?, 1, ?, ?)
-                ON CONFLICT(vpa, payer_id) DO UPDATE SET
-                    payments = payee_payers.payments + 1,
-                    first_at = MIN(payee_payers.first_at, excluded.first_at),
-                    last_at  = MAX(payee_payers.last_at,  excluded.last_at)
-                """,
-                (key, payer_id, when, when),
-            )
-            # Same transaction as the two upserts above. Committing an edge
-            # and failing its graph structures would leave a payee whose
-            # cached shape says it has fewer payers than the edge table holds,
-            # and nothing downstream could detect the disagreement.
-            observe_edge(conn, key, payer_id)
+            if cur.rowcount == 0:
+                # Already counted under this key.
+                if autocommit:
+                    conn.rollback()
+                return False
+            if not timed:
+                if autocommit:
+                    conn.commit()
+                return True
+            apply_to_aggregates(conn, key, payer_id, amount, when, display_name)
         except Exception:
             if autocommit:
                 conn.rollback()
@@ -216,6 +261,48 @@ def record_payment(
     finally:
         if own:
             conn.close()
+    return True
+
+
+def apply_to_aggregates(conn: sqlite3.Connection, key: str, payer_id: str, amount: float,
+                        when: str, display_name: Optional[str] = None) -> None:
+    """Fold one dated payment into payee_reputation, payee_payers and the
+    graph. The ledger row is the caller's business; this is the derived part,
+    shared by record_payment and the history rebuild so they cannot differ."""
+    conn.execute(
+        """
+        INSERT INTO payee_reputation
+            (vpa, display_name, first_seen, last_seen, payment_count,
+             total_amount, sum_sq_amount, min_amount, max_amount)
+        VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?)
+        ON CONFLICT(vpa) DO UPDATE SET
+            display_name  = COALESCE(payee_reputation.display_name, excluded.display_name),
+            first_seen    = MIN(payee_reputation.first_seen, excluded.first_seen),
+            last_seen     = MAX(payee_reputation.last_seen, excluded.last_seen),
+            payment_count = payee_reputation.payment_count + 1,
+            total_amount  = payee_reputation.total_amount + excluded.total_amount,
+            sum_sq_amount = payee_reputation.sum_sq_amount + excluded.sum_sq_amount,
+            min_amount    = MIN(COALESCE(payee_reputation.min_amount, excluded.min_amount), excluded.min_amount),
+            max_amount    = MAX(COALESCE(payee_reputation.max_amount, excluded.max_amount), excluded.max_amount)
+        """,
+        (key, display_name, when, when, amount, amount * amount, amount, amount),
+    )
+    conn.execute(
+        """
+        INSERT INTO payee_payers (vpa, payer_id, payments, first_at, last_at)
+        VALUES (?, ?, 1, ?, ?)
+        ON CONFLICT(vpa, payer_id) DO UPDATE SET
+            payments = payee_payers.payments + 1,
+            first_at = MIN(payee_payers.first_at, excluded.first_at),
+            last_at  = MAX(payee_payers.last_at,  excluded.last_at)
+        """,
+        (key, payer_id, when, when),
+    )
+    # Same transaction as the two upserts above. Committing an edge
+    # and failing its graph structures would leave a payee whose
+    # cached shape says it has fewer payers than the edge table holds,
+    # and nothing downstream could detect the disagreement.
+    observe_edge(conn, key, payer_id)
 
 
 def report_payee(vpa: str, reporter: str, reason: str = "") -> int:
@@ -262,6 +349,36 @@ def set_blocked(vpa: str, blocked: bool = True) -> None:
         conn.close()
 
 
+def _provenance_counts(key: str, distinct_payers: int,
+                       conn: Optional[sqlite3.Connection]) -> dict[str, int]:
+    """How many distinct payers each kind of source accounts for.
+
+    A payer seen both ways counts under each. Payers in the aggregate with no
+    ledger row predate the ledger and are OTHER_OBSERVED.
+    """
+    own = conn is None
+    conn = conn or connect()
+    try:
+        rows = conn.execute(
+            "SELECT provenance, COUNT(DISTINCT payer_id) AS n FROM payment_observations "
+            "WHERE vpa = ? AND in_aggregate = 1 GROUP BY provenance", (key,)
+        ).fetchall()
+        ledgered = conn.execute(
+            "SELECT COUNT(DISTINCT payer_id) FROM payment_observations "
+            "WHERE vpa = ? AND in_aggregate = 1", (key,)
+        ).fetchone()[0]
+    except sqlite3.OperationalError:
+        return {}
+    finally:
+        if own:
+            conn.close()
+    counts = {"SYSTEM_CONFIRMED": 0, "STATEMENT_OBSERVED": 0, "OTHER_OBSERVED": 0}
+    for r in rows:
+        counts[r["provenance"]] = counts.get(r["provenance"], 0) + int(r["n"])
+    counts["OTHER_OBSERVED"] += max(0, distinct_payers - int(ledgered or 0))
+    return counts
+
+
 def _days_since(iso: Optional[str]) -> Optional[int]:
     if not iso:
         return None
@@ -269,38 +386,31 @@ def _days_since(iso: Optional[str]) -> Optional[int]:
         ts = datetime.fromisoformat(iso.replace("Z", "+00:00"))
     except ValueError:
         return None
-    if ts.tzinfo is None:
-        ts = ts.replace(tzinfo=timezone.utc)
-    return max(0, (datetime.now(timezone.utc) - ts).days)
+    # Stored times are naive IST (clock.py); compare against IST now, not
+    # UTC now, or every age is off by 5h30m.
+    from backend.app.core.clock import now_app, to_app_naive
+
+    ts = to_app_naive(ts)
+    return max(0, (now_app() - ts).days)
 
 
 def payer_has_paid(vpa: str, payer_id: Optional[str],
-                   conn: Optional[sqlite3.Connection] = None) -> Optional[bool]:
-    """Has THIS payer paid THIS payee before?
+                   conn: Optional[sqlite3.Connection] = None,
+                   before: Optional[Any] = None) -> Optional[bool]:
+    """Has THIS payer paid THIS payee (before `before`, when given)?
 
-    This is the question the model's `payee_is_new` feature was trained on, and
-    until now nothing answered it: serving substituted "does this payee have
-    any repeat payers at all", which is a property of the payee's whole
-    network and is true for almost every payee. The two are different
-    questions, and the substitution cost most of the model's recall.
+    Answered by payee_history(), the one authoritative source - this used to
+    read payee_payers directly, which statement imports never wrote, so a
+    payee the uploaded statement showed as paid came back "never paid".
 
     Returns None when there is no payer to ask about, so the caller can tell
     "not known before" apart from "we cannot say".
     """
     if not payer_id:
         return None
-    key = normalise_vpa(vpa)
-    own = conn is None
-    conn = conn or connect()
-    try:
-        row = conn.execute(
-            "SELECT payments FROM payee_payers WHERE vpa = ? AND payer_id = ?",
-            (key, str(payer_id)),
-        ).fetchone()
-    finally:
-        if own:
-            conn.close()
-    return bool(row and (row["payments"] or 0) > 0)
+    from backend.app.services.payee_history import payee_history
+
+    return payee_history(payer_id, vpa, before=before, conn=conn).paid_before
 
 
 def assess_payee(vpa: str, conn: Optional[sqlite3.Connection] = None) -> PayeeReputation:
@@ -323,6 +433,7 @@ def assess_payee(vpa: str, conn: Optional[sqlite3.Connection] = None) -> PayeeRe
 
     rep.distinct_payers = payers["n"] or 0
     rep.repeat_payers = payers["repeat_n"] or 0
+    rep.observed_by = _provenance_counts(key, rep.distinct_payers, conn if not own else None)
 
     if row is None and rep.distinct_payers == 0:
         # The single most common finding in the whole system: on a fresh

@@ -1,0 +1,18 @@
+{
+  "validation": {
+    "ece_uniform_10": 0.001724601552408173,
+    "ece_quantile_10_unique_edges": 0.0012040092599114047,
+    "bins_quantile_populated": 4,
+    "brier": 0.005921932496714922,
+    "mean_predicted": 0.01113327277045342,
+    "observed_rate": 0.011833333333333333
+  },
+  "test": {
+    "ece_uniform_10": 0.0016876153737306456,
+    "ece_quantile_10_unique_edges": 0.0007729629344141337,
+    "bins_quantile_populated": 4,
+    "brier": 0.0055535156476493736,
+    "mean_predicted": 0.011764490739875441,
+    "observed_rate": 0.011833333333333333
+  }
+}

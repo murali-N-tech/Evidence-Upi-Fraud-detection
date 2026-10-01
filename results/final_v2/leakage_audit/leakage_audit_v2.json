@@ -1,0 +1,165 @@
+{
+  "items": [
+    {
+      "#": 1,
+      "check": "No test labels used during training",
+      "status": "PASS",
+      "evidence": "Seed-42 split (train_model_v2.splits): train 72,000, validation 18,000, test 30,000, pairwise index overlap 0. Seeds 42\u201351 (common.stratified_splits): overlaps {42: 0, 43: 0, 44: 0, 45: 0, 46: 0, 47: 0, 48: 0, 49: 0, 50: 0, 51: 0}. Models are fitted on the training indices only (CalibratedClassifierCV.fit(X_train)). Frozen artefact records test_rows_used_in_any_decision = False."
+    },
+    {
+      "#": 2,
+      "check": "No test labels used for threshold selection",
+      "status": "PASS",
+      "evidence": "Frozen threshold 0.1123 re-derived from validation probabilities only: 0.112265 -> 0.1123. All 130 ablation/multi-seed fits satisfy validation FPR \u2264 1%; 64 of them exceed 1% on test, which would not happen if the test split had been used to tune."
+    },
+    {
+      "#": 3,
+      "check": "No test-set metric used for model selection",
+      "status": "PASS",
+      "evidence": "The V2 configuration (learner, calibration, 47-feature set) was frozen on validation (models/metrics_v2.json: threshold_selected_on = 'validation split', test_rows_used_in_any_decision = False). The ablation and ten-seed runs select nothing: every configuration is reported."
+    },
+    {
+      "#": 4,
+      "check": "No future graph information used",
+      "status": "PASS",
+      "evidence": "Chronological replay, 3 streams: store max(at) < t before every assessment (180,000 checks, 0 violations); arrival window (142,634, 0), connected component (142,634, 0) and positional-finding gates (142,634, 0) equal an independent shadow of earlier payments."
+    },
+    {
+      "#": 5,
+      "check": "No post-payment information used at pre-payment decision time",
+      "status": "PASS",
+      "evidence": "In the replay loop check_payee(...) precedes record_payment(...) (verified in source: True); an independent rebuild of the store from earlier payments only reproduced the recorded assessment exactly for 165 sampled payments (0 differences). Row-level corpus: each row is generated as the evidence state before the payment (dataset_v2 docstring); no post-payment column exists."
+    },
+    {
+      "#": 6,
+      "check": "No future payer behaviour used",
+      "status": "PASS",
+      "evidence": "Replay: the payer's profile and velocity are built from that payer's rows appended only after each assessment (prior[payer].append follows record_payment); velocity.prepayment_velocity filters history < t. Pair-count check (test 2) 180,000 checks, 0 violations."
+    },
+    {
+      "#": 7,
+      "check": "No future payee history used",
+      "status": "PASS",
+      "evidence": "Distinct payers read at t equal the shadow of earlier payments (180,000 checks, 0 violations); payee_history(before=t) applies a strict inequality."
+    },
+    {
+      "#": 8,
+      "check": "No test-derived preprocessing",
+      "status": "PASS",
+      "evidence": "The pipeline has no fitted preprocessing step outside the estimator: HistGradientBoosting bins and its internal early-stopping hold-out are fitted within each training fold of CalibratedClassifierCV.fit(X_train)."
+    },
+    {
+      "#": 9,
+      "check": "No test-derived imputation",
+      "status": "NOT APPLICABLE",
+      "evidence": "No imputer is used: missing values stay NaN and are routed natively by HistGradientBoosting; availability flags record absence."
+    },
+    {
+      "#": 10,
+      "check": "No test-derived scaling",
+      "status": "NOT APPLICABLE",
+      "evidence": "No scaler is used (tree model on raw feature values)."
+    },
+    {
+      "#": 11,
+      "check": "No test-derived calibration",
+      "status": "PASS",
+      "evidence": "Isotonic calibration is fitted by 5-fold cross-validation inside the training split (isotonic, 5-fold); validation and test are never passed to fit()."
+    },
+    {
+      "#": 12,
+      "check": "No message-template leakage between train and test",
+      "status": "PASS",
+      "evidence": "Caveat disclosed: message texts are drawn from one pool of 1,022 templates, so 99.88\u201399.99% of test messages reuse a template seen in training rows, and the coercion weights were fitted on that pool. No label crosses splits. The effect was measured with a template-disjoint control (disjoint template halves, coercion model refitted on the training half, 10 seeds): full-V2 PR-AUC 0.7155 \u00b1 0.0219 vs 0.7196 \u00b1 0.0228 (paired \u0394 -0.42 \u00b1 0.71 pp); social-engineering recall \u0394 -0.11 \u00b1 1.49 pp."
+    },
+    {
+      "#": 13,
+      "check": "No duplicate rows across train/validation/test",
+      "status": "PASS",
+      "evidence": "Index sets are disjoint (item 1). Identical 47-feature vectors across splits (seed 42): train\u2229test 0, validation\u2229test 0, train\u2229validation 0 distinct vectors; 0 test rows have a feature vector that also occurs in train or validation; 0 feature vectors occur with both labels. No feature vector is shared across splits."
+    },
+    {
+      "#": 14,
+      "check": "No identity leakage",
+      "status": "PASS",
+      "evidence": "No identifier is a feature (columns matching id/user/vpa/txn/name: ['amount_over_user_avg', 'seconds_since_last_txn']). Caveat disclosed: the row-level split is random, so one simulated payer's rows can appear in train and test; generalisation to unseen payers is not measured by the row-level experiments."
+    },
+    {
+      "#": 15,
+      "check": "No target leakage",
+      "status": "PASS",
+      "evidence": "No feature is computed from the label or the scenario at assessment time. Strongest single features on the training split (univariate AUC, max(AUC, 1\u2212AUC), non-missing rows): arrival_span_days 0.926, payee_repeat_ratio 0.909, lifespan_days 0.901, payee_age_days 0.890, component_size 0.864 \u2014 no single feature separates the classes. The simulator draws features conditional on the scenario by design; that is the generating process, not a leak, and is a stated limitation."
+    },
+    {
+      "#": 16,
+      "check": "Current transaction not inserted before its own chronological assessment",
+      "status": "PASS",
+      "evidence": "Source order check_payee \u2192 record_payment (True); store contains no payment at or after t (180,000 checks, 0 violations); a first-time pair is reported as new (180,000 checks, 0 violations)."
+    },
+    {
+      "#": 17,
+      "check": "No hidden fraud labels used by evidence modules",
+      "status": "PASS",
+      "evidence": "No file under backend/app references 'is_fraud' or 'scenario' (files matching: none). check_payee signature: (payload: 'str', payer_id: 'Optional[str]' = None, amount: 'Optional[float]' = None, conn: 'Optional[sqlite3.Connection]' = None, intent: 'Optional[str]' = None, message: 'Optional[str]' = None, profile: 'Optional[dict[str, Any]]' = None, history: 'Optional[Any]' = None, timestamp: 'Optional[str]' = None, velocity: 'Optional[dict[str, float]]' = None) -> 'dict[str, Any]'; the replay passes only payload, payer id, amount, stated intent, message, the payer's earlier rows (timestamp, amount, merchant, upi_id, status, txn_type, time_known) and the time \u2014 no label field."
+    },
+    {
+      "#": 18,
+      "check": "No outcome information used in the pre-payment path",
+      "status": "PASS",
+      "evidence": "The assessment path is read-only (observation written only by record_payment after confirmation); settlement outcome, complaints and labels are not inputs. Payee reports exist in the schema but no replay payment files a report, so no outcome-derived report enters."
+    }
+  ],
+  "summary": {
+    "PASS": 16,
+    "FAIL": 0,
+    "NOT APPLICABLE": 2
+  },
+  "univariate_auc_train": {
+    "amount": 0.6754852806457919,
+    "amount_over_user_avg": 0.7249658571404056,
+    "is_night": 0.5909724810971245,
+    "hours_from_usual": 0.6256103958460985,
+    "seconds_since_last_txn": 0.6686655116893679,
+    "txns_last_hour": 0.6549843372506406,
+    "txns_today_over_avg": 0.6279058797826821,
+    "payee_is_new": 0.8618911316660742,
+    "payee_age_days": 0.8897442356274884,
+    "payee_distinct_payers": 0.6775004793518935,
+    "payee_repeat_ratio": 0.9093948457365837,
+    "payee_history_available": 0.5613162503231538,
+    "prior_payments_to_payee": 0.8595831617264899,
+    "days_since_first_payment_to_payee": 0.5535302344865511,
+    "arrival_span_days": 0.9262745922870271,
+    "lifespan_days": 0.9013963583604747,
+    "payments_per_day": 0.7752926116067279,
+    "component_size": 0.864442716474332,
+    "shared_payer_peak": 0.6630008045937484,
+    "overlap_ratio": 0.5863544375618561,
+    "graph_available": 0.5613162503231538,
+    "msg_authority": 0.5740347864078401,
+    "msg_urgency": 0.6605099696428706,
+    "msg_fear": 0.5922924529012527,
+    "msg_pay_request": 0.6126784328791063,
+    "msg_credential_request": 0.5050514865954064,
+    "msg_secrecy": 0.5588536605575769,
+    "msg_remote_control": 0.5115833163845638,
+    "msg_verify_payment": 0.5567675306772729,
+    "msg_lure": 0.5683434649311128,
+    "msg_contact_offline": 0.5429166949146159,
+    "msg_coercion_probability": 0.763606698153714,
+    "msg_coercion_score": 0.7460889622080105,
+    "msg_weak_cues_only": 0.5087247745813653,
+    "msg_length_chars": 0.7086804817970215,
+    "msg_word_count": 0.6940581380458446,
+    "msg_digit_ratio": 0.6343916295676933,
+    "msg_uppercase_ratio": 0.5734715147680278,
+    "message_available": 0.524682730416014,
+    "link_present": 0.5143553817992814,
+    "link_suspicious_score": 0.5639783357061611,
+    "link_brand_conflict": 0.5214084804109888,
+    "intent_stated": 0.5056036306125677,
+    "intent_is_refund_or_asked": 0.6920363893789339,
+    "intent_payee_mismatch": 0.5316048445250947,
+    "payee_is_phone_address": 0.6132117453187688
+  }
+}

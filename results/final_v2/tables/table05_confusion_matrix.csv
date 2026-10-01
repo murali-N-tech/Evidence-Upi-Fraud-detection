@@ -1,0 +1,3 @@
+,Predicted Legitimate,Predicted Fraud,Total
+Actual Legitimate,"TN = 29,350",FP = 295,"29,645"
+Actual Fraud,FN = 78,TP = 277,355

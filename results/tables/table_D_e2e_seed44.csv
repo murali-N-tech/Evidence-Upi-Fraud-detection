@@ -1,0 +1,3 @@
+Slice,n,fraud,Risk PR-AUC,Risk ROC-AUC,Classifier-only PR-AUC,WARN+ recall %,WARN+ FPR %,STEP_UP+ recall %,STEP_UP+ FPR %,BLOCK recall %,BLOCK FPR %,Intervention %
+full_stream,60000,720,0.0470,0.7660,0.0356,82.22,55.13,68.19,24.07,51.94,13.090,55.46
+test_last25pct,15000,218,0.1350,0.8430,0.0837,79.82,34.69,64.68,11.89,49.54,6.116,35.35

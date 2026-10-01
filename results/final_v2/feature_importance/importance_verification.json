@@ -1,0 +1,5 @@
+{
+  "permutation_max_abs_diff_vs_reported": 9.540979117872439e-17,
+  "shap_max_abs_diff_vs_reported": 9.8879238130678e-17,
+  "method": "permutation importance on the frozen calibrated model, test split, scoring = average precision, 5 repeats, random_state 42; SHAP TreeExplainer on the uncalibrated booster of calibration fold 1, 200 test rows (as evaluate_model_v2.py)"
+}

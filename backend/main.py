@@ -32,6 +32,12 @@ from backend.app.services.profile_store import (
     save_statement_transactions,
     get_all_edges,
 )
+from backend.app.services.velocity import prepayment_velocity
+from backend.app.ingestion.pipeline import (
+    ImportError_ as StatementImportError,
+    import_statement,
+    record_failed_import,
+)
 from backend.app.services.statement_parser import (
     generate_behavior_profile,
     parse_statement_file,
@@ -369,35 +375,26 @@ def _payer_context(sender: str, current_time: str) -> dict[str, float]:
     vector the model was never given - on roughly one transaction in twenty
     that vector produces the opposite decision. One function now serves both
     endpoints so they cannot disagree.
+
+    And it is the SAME function /payee/check uses (services/velocity.py), so
+    the strictly-before rule and the IST convention (core/clock.py) are
+    implemented once. This copy used to read every naive timestamp as UTC.
     """
-    NO_PRIOR_GAP = 86_400.0
+    from backend.app.core.clock import app_iso
+
     df = get_all_transactions(sender=sender, limit=200)
-    now = pd.to_datetime(current_time, errors="coerce", utc=True)
+    # velocity.py compares naive values; hand it naive IST on both sides so a
+    # client that stamped a payment in UTC ("...Z") is not read 5h30m off.
+    if df is not None and not df.empty and "timestamp" in df.columns:
+        df = df.assign(timestamp=[app_iso(t) for t in df["timestamp"]])
+    return prepayment_velocity(df, app_iso(current_time))
 
-    context = {
-        "seconds_since_last_txn": NO_PRIOR_GAP,
-        "txns_last_hour": 0.0,
-        "txns_today": 1.0,
-    }
-    if df is None or df.empty or pd.isna(now):
-        return context
 
-    stamps = pd.to_datetime(df["timestamp"], errors="coerce", utc=True)
-    stamps = stamps.dropna()
-    if stamps.empty:
-        return context
+def _now_app_iso() -> str:
+    """Decision time T in IST (backend/app/core/clock.py), not server time."""
+    from backend.app.core.clock import now_app
 
-    delta = (now - stamps.max()).total_seconds()
-    # Clamp: clock skew or an out-of-order timestamp must not become a
-    # negative gap, which reads as the strongest velocity signal there is.
-    context["seconds_since_last_txn"] = float(min(max(delta, 1.0), NO_PRIOR_GAP))
-
-    # A real count of this payer's payments in the past hour. The model was
-    # trained on a COUNT; serving used to pass tx.velocity_score, which this
-    # same file synthesises as risk_score/10 - a score, not a count.
-    context["txns_last_hour"] = float(((now - stamps).dt.total_seconds() <= 3600).sum())
-    context["txns_today"] = float((stamps.dt.date == now.date()).sum()) + 1.0
-    return context
+    return now_app().isoformat(timespec="microseconds")
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -532,12 +529,16 @@ def predict(tx: Transaction, user: str = Depends(get_current_user)):
     # profile all read back.
     tx = tx.model_copy(update={"sender": user})
 
-    try:
-        current_time = pd.to_datetime(tx.timestamp)
-        hour = current_time.hour
-    except:
-        current_time = pd.Timestamp.now()
+    from backend.app.core.clock import now_app, to_app_naive
+
+    # IST wall time whatever zone the client stamped it in (clock.py).
+    parsed_time = to_app_naive(tx.timestamp)
+    if parsed_time is None:
+        current_time = pd.Timestamp(now_app())
         hour = 12
+    else:
+        current_time = pd.Timestamp(parsed_time)
+        hour = current_time.hour
 
     is_night = 1 if hour < 6 or hour > 22 else 0
 
@@ -551,9 +552,11 @@ def predict(tx: Transaction, user: str = Depends(get_current_user)):
     payee = assess_payee(payee_key(tx.receiver, tx.receiver))
 
     context = _payer_context(tx.sender, current_time)
+    # The feature builder reads the hour from this string; give it IST.
+    ist_timestamp = current_time.isoformat()
     features = build_features(
         amount=tx.amount,
-        timestamp=tx.timestamp,
+        timestamp=ist_timestamp,
         profile=payer_profile,
         reputation=payee.as_dict(),
         seconds_since_last_txn=context["seconds_since_last_txn"],
@@ -916,55 +919,34 @@ async def upload_statement(
             detail=f"Statement exceeds the {MAX_STATEMENT_BYTES // (1024 * 1024)} MB limit",
         )
 
+    # One pipeline for every provider and format: adapter -> canonical ->
+    # validate -> dedupe -> store -> payee history / graph -> profile.
+    # See backend/app/ingestion/pipeline.py.
     try:
-        parsed = parse_statement_file(file.filename or "statement.pdf", content)
+        result = import_statement(
+            user_id, file.filename or "statement.pdf", content,
+            max_rows=MAX_STATEMENT_ROWS,
+        )
     except ValueError as exc:
+        # Unsupported extension: the message names the accepted formats.
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except StatementImportError as exc:
+        record_failed_import(user_id, "layout_not_recognised")
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
-        # The library's own words ("Stream has ended unexpectedly") described
-        # the server's internals to the client and called a corrupt upload a
-        # 500 - our failure rather than an unreadable file. Logged here, where
-        # it is useful, and answered with what the caller can act on.
-        print(f"[statement] parse failed for {file.filename!r}: {type(exc).__name__}: {exc}")
+        # Type only. The filename is user-controlled and often carries a phone
+        # number; the exception text can quote statement content. Neither
+        # belongs in a log.
+        print(f"[statement] import failed: {type(exc).__name__}")
+        record_failed_import(user_id, "processing_error")
         raise HTTPException(
             status_code=400,
-            detail="This file could not be read as a statement. Export it again "
-                   "from your bank or UPI app and upload the original PDF or CSV.",
+            detail="Statement processing failed: this file could not be read as a "
+                   "statement. Export it again from your bank or "
+                   "UPI app and upload the original PDF or CSV.",
         ) from exc
 
-    transactions = parsed["transactions"][:MAX_STATEMENT_ROWS]
-    if len(parsed["transactions"]) > MAX_STATEMENT_ROWS:
-        parsed["warnings"].append(
-            f"Statement truncated to the first {MAX_STATEMENT_ROWS} transactions."
-        )
-    if not transactions:
-        return {
-            "user_id": user_id,
-            "statement_id": None,
-            "source_type": parsed["source_type"],
-            "transactions_extracted": 0,
-            "warnings": parsed["warnings"],
-            "profile_created": False,
-        }
-
-    statement_id = f"stmt_{uuid.uuid4().hex[:8]}"
-    save_statement_transactions(
-        user_id=user_id,
-        statement_id=statement_id,
-        source_type=parsed["source_type"],
-        transactions=transactions,
-    )
-
-    history = get_user_transactions(user_id)
-    profile = generate_behavior_profile(history.to_dict(orient="records"))
-    save_behavior_profile(
-        user_id=user_id,
-        source_type=parsed["source_type"],
-        profile=profile,
-        transaction_count=int(len(history)),
-    )
-
-    if retain_source:
+    if retain_source and result.status != "FAILED":
         uploads_dir = Path("data") / "uploaded_statements"
         uploads_dir.mkdir(parents=True, exist_ok=True)
         # The filename comes from the multipart header, which is to say from
@@ -972,17 +954,21 @@ async def upload_statement(
         # so "../../x.csv" was a path and not a name: with the right directory
         # in place that writes outside the uploads folder, and without one it
         # raised FileNotFoundError and returned an unexplained 500.
-        (uploads_dir / f"{user_id}_{statement_id}_{_safe_filename(file.filename)}").write_bytes(content)
+        (uploads_dir / f"{user_id}_{result.statement_id}_{_safe_filename(file.filename)}").write_bytes(content)
 
+    # A summary, not the transactions. The full parsed list used to be echoed
+    # back here, and the app never read it.
+    report = result.report
     return {
         "user_id": user_id,
-        "statement_id": statement_id,
-        "source_type": parsed["source_type"],
-        "transactions_extracted": len(transactions),
-        "extracted_transactions": transactions,
-        "warnings": parsed["warnings"],
-        "profile_created": True,
-        "profile": get_behavior_profile(user_id),
+        "statement_id": result.statement_id,
+        "source_type": report.get("source_format"),
+        "status": result.status,
+        "import": report,
+        "transactions_extracted": report.get("stored_transactions", 0),
+        "warnings": report.get("warnings", []),
+        "profile_created": bool(report.get("profile_updated")),
+        "profile": get_behavior_profile(user_id) if report.get("profile_updated") else None,
     }
 
 
@@ -1183,7 +1169,7 @@ def payee_check(payload: PayeeCheckRequest, user: str = Depends(get_current_user
         message=payload.message,
         profile=profile,
         history=get_user_transactions(user) if profile else None,
-        timestamp=pd.Timestamp.now().isoformat(),
+        timestamp=_now_app_iso(),
     )
 
 
@@ -1228,9 +1214,10 @@ def payee_report(payload: PayeeReportRequest, user: str = Depends(get_current_us
 
 @app.post("/payee/confirm")
 def payee_confirm(payload: PayeeCheckRequest, user: str = Depends(get_current_user)):
-    """Record that the payer went ahead. This is what grows the reputation
-    graph: without it the store only ever knows what was uploaded."""
+    """Record that the payer went ahead. This grows the reputation graph
+    alongside statement imports."""
     profile = get_behavior_profile(user)
+    checked_at = _now_app_iso()
     result = check_payee(
         payload.payload,
         payer_id=user,
@@ -1239,12 +1226,17 @@ def payee_confirm(payload: PayeeCheckRequest, user: str = Depends(get_current_us
         message=payload.message,
         profile=profile,
         history=get_user_transactions(user) if profile else None,
-        timestamp=pd.Timestamp.now().isoformat(),
+        timestamp=checked_at,
     )
     vpa = result["payee"]["key"]
     if vpa and payload.amount:
+        # The payer confirmed it here: SYSTEM_CONFIRMED - still an observation
+        # by this app, not a confirmation from the payment network. Stamped
+        # with the same moment the check used, so a later check at T sees it
+        # as previous only when it really was.
         record_payment(vpa, payer_id=user, amount=payload.amount,
-                       display_name=result["payee"]["display_name"])
+                       at=checked_at, display_name=result["payee"]["display_name"],
+                       provenance="SYSTEM_CONFIRMED")
     return {"recorded": bool(vpa and payload.amount), "payee": vpa}
 
 

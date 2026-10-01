@@ -1,0 +1,1373 @@
+{
+  "what": "Ten-family end-to-end evaluation with the FROZEN V2 model as the Classifier family.",
+  "threshold_v2": 0.1123,
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "rows": 60000,
+      "fraud": 720,
+      "full_stream": {
+        "n": 60000,
+        "fraud": 720,
+        "prevalence": 0.012,
+        "risk_pr_auc": 0.04999704120611715,
+        "risk_roc_auc": 0.7848003003636228,
+        "v2_available_rate": 0.8366833333333333,
+        "v2_alone_pr_auc_where_available": 0.1335972238406018,
+        "v2_alone_roc_auc_where_available": 0.896629760889945,
+        "risk_pr_auc_same_rows": 0.06335518687680647,
+        "risk_roc_auc_same_rows": 0.8200287952316707,
+        "v2_alone_at_threshold": {
+          "tp": 51,
+          "fp": 241,
+          "fn": 489,
+          "tn": 49420,
+          "recall": 0.09444444444444444,
+          "precision": 0.17465753424657535,
+          "fpr": 0.004852902680171563,
+          "f1": 0.12259615384615384
+        },
+        "verdict_counts": {
+          "all": {
+            "APPROVE": 29016,
+            "WARN": 16777,
+            "STEP_UP": 6421,
+            "BLOCK": 7786
+          },
+          "legitimate": {
+            "APPROVE": 28912,
+            "WARN": 16676,
+            "STEP_UP": 6278,
+            "BLOCK": 7414
+          },
+          "fraud": {
+            "APPROVE": 104,
+            "WARN": 101,
+            "STEP_UP": 143,
+            "BLOCK": 372
+          },
+          "social_engineering": {
+            "APPROVE": 15,
+            "WARN": 30,
+            "STEP_UP": 65,
+            "BLOCK": 250
+          },
+          "mule_collection": {
+            "APPROVE": 4,
+            "WARN": 35,
+            "STEP_UP": 38,
+            "BLOCK": 81
+          },
+          "account_takeover": {
+            "APPROVE": 35,
+            "WARN": 28,
+            "STEP_UP": 40,
+            "BLOCK": 41
+          },
+          "card_testing": {
+            "APPROVE": 50,
+            "WARN": 8,
+            "STEP_UP": 0,
+            "BLOCK": 0
+          }
+        },
+        "coverage": {
+          "mean": 93.965,
+          "median": 97.0,
+          "min": 60,
+          "max": 100,
+          "by_level": {
+            "FULL": {
+              "n": 58003,
+              "mean": 94.93571022188507,
+              "median": 97.0,
+              "min": 76,
+              "max": 100
+            },
+            "PARTIAL": {
+              "n": 1997,
+              "mean": 65.77065598397597,
+              "median": 64.0,
+              "min": 60,
+              "max": 72
+            }
+          },
+          "by_label": {
+            "legitimate": {
+              "mean": 93.973987854251,
+              "median": 97.0
+            },
+            "fraud": {
+              "mean": 93.225,
+              "median": 96.0
+            }
+          },
+          "by_payee_status": {
+            "NEW_TO_USER_BUT_OBSERVED": {
+              "n": 17373,
+              "mean": 94.00823116329937,
+              "median": 97.0
+            },
+            "PAID_BEFORE": {
+              "n": 14315,
+              "mean": 97.9789032483409,
+              "median": 99.0
+            },
+            "PAID_OFTEN": {
+              "n": 4340,
+              "mean": 98.0725806451613,
+              "median": 99.0
+            },
+            "PAID_ONCE": {
+              "n": 11952,
+              "mean": 97.0591532797858,
+              "median": 99.0
+            },
+            "UNKNOWN": {
+              "n": 12020,
+              "mean": 84.56247920133112,
+              "median": 88.0
+            }
+          }
+        },
+        "evidence_level_counts": {
+          "FULL": 58003,
+          "PARTIAL": 1997
+        },
+        "warn_plus": {
+          "tp": 616,
+          "fp": 30368,
+          "fn": 104,
+          "tn": 28912,
+          "recall": 0.8555555555555555,
+          "precision": 0.019881229021430417,
+          "fpr": 0.512280701754386,
+          "f1": 0.038859449911683074,
+          "scenario_recall": {
+            "social_engineering": 0.9583333333333334,
+            "mule_collection": 0.9746835443037974,
+            "account_takeover": 0.7569444444444444,
+            "card_testing": 0.13793103448275862
+          }
+        },
+        "step_up_plus": {
+          "tp": 515,
+          "fp": 13692,
+          "fn": 205,
+          "tn": 45588,
+          "recall": 0.7152777777777778,
+          "precision": 0.03624973604561132,
+          "fpr": 0.23097165991902835,
+          "f1": 0.06900247872981845,
+          "scenario_recall": {
+            "social_engineering": 0.875,
+            "mule_collection": 0.7531645569620253,
+            "account_takeover": 0.5625,
+            "card_testing": 0.0
+          }
+        },
+        "block": {
+          "tp": 372,
+          "fp": 7414,
+          "fn": 348,
+          "tn": 51866,
+          "recall": 0.5166666666666667,
+          "precision": 0.04777806319034164,
+          "fpr": 0.12506747638326585,
+          "f1": 0.08746766988008466,
+          "scenario_recall": {
+            "social_engineering": 0.6944444444444444,
+            "mule_collection": 0.5126582278481012,
+            "account_takeover": 0.2847222222222222,
+            "card_testing": 0.0
+          }
+        },
+        "intervention_rate": 0.5164
+      },
+      "last25pct": {
+        "n": 15000,
+        "fraud": 172,
+        "prevalence": 0.011466666666666667,
+        "risk_pr_auc": 0.11948403684423638,
+        "risk_roc_auc": 0.8686557408673723,
+        "v2_available_rate": 0.9876666666666667,
+        "v2_alone_pr_auc_where_available": 0.24543178473146443,
+        "v2_alone_roc_auc_where_available": 0.9228542713740353,
+        "risk_pr_auc_same_rows": 0.10848683353648236,
+        "risk_roc_auc_same_rows": 0.8673269667820165,
+        "v2_alone_at_threshold": {
+          "tp": 22,
+          "fp": 42,
+          "fn": 137,
+          "tn": 14614,
+          "recall": 0.13836477987421383,
+          "precision": 0.34375,
+          "fpr": 0.0028657205240174674,
+          "f1": 0.19730941704035873
+        },
+        "verdict_counts": {
+          "all": {
+            "APPROVE": 10308,
+            "WARN": 2726,
+            "STEP_UP": 825,
+            "BLOCK": 1141
+          },
+          "legitimate": {
+            "APPROVE": 10284,
+            "WARN": 2702,
+            "STEP_UP": 801,
+            "BLOCK": 1041
+          },
+          "fraud": {
+            "APPROVE": 24,
+            "WARN": 24,
+            "STEP_UP": 24,
+            "BLOCK": 100
+          },
+          "social_engineering": {
+            "APPROVE": 0,
+            "WARN": 3,
+            "STEP_UP": 6,
+            "BLOCK": 61
+          },
+          "mule_collection": {
+            "APPROVE": 0,
+            "WARN": 11,
+            "STEP_UP": 10,
+            "BLOCK": 29
+          },
+          "account_takeover": {
+            "APPROVE": 14,
+            "WARN": 9,
+            "STEP_UP": 8,
+            "BLOCK": 10
+          },
+          "card_testing": {
+            "APPROVE": 10,
+            "WARN": 1,
+            "STEP_UP": 0,
+            "BLOCK": 0
+          }
+        },
+        "coverage": {
+          "mean": 97.19993333333333,
+          "median": 97.0,
+          "min": 68,
+          "max": 100,
+          "by_level": {
+            "FULL": {
+              "n": 14999,
+              "mean": 97.20188012534169,
+              "median": 97.0,
+              "min": 76,
+              "max": 100
+            },
+            "PARTIAL": {
+              "n": 1,
+              "mean": 68.0,
+              "median": 68.0,
+              "min": 68,
+              "max": 68
+            }
+          },
+          "by_label": {
+            "legitimate": {
+              "mean": 97.21499865120043,
+              "median": 97.0
+            },
+            "fraud": {
+              "mean": 95.90116279069767,
+              "median": 97.0
+            }
+          },
+          "by_payee_status": {
+            "NEW_TO_USER_BUT_OBSERVED": {
+              "n": 3031,
+              "mean": 97.62817551963049,
+              "median": 99.0
+            },
+            "PAID_BEFORE": {
+              "n": 5303,
+              "mean": 98.05034885913634,
+              "median": 99.0
+            },
+            "PAID_OFTEN": {
+              "n": 2448,
+              "mean": 98.07148692810458,
+              "median": 99.0
+            },
+            "PAID_ONCE": {
+              "n": 2890,
+              "mean": 97.96505190311419,
+              "median": 99.0
+            },
+            "UNKNOWN": {
+              "n": 1328,
+              "mean": 89.55496987951807,
+              "median": 91.0
+            }
+          }
+        },
+        "evidence_level_counts": {
+          "FULL": 14999,
+          "PARTIAL": 1
+        },
+        "warn_plus": {
+          "tp": 148,
+          "fp": 4544,
+          "fn": 24,
+          "tn": 10284,
+          "recall": 0.8604651162790697,
+          "precision": 0.03154305200341006,
+          "fpr": 0.30644726193687616,
+          "f1": 0.06085526315789474,
+          "scenario_recall": {
+            "social_engineering": 1.0,
+            "mule_collection": 1.0,
+            "account_takeover": 0.6585365853658537,
+            "card_testing": 0.09090909090909091
+          }
+        },
+        "step_up_plus": {
+          "tp": 124,
+          "fp": 1842,
+          "fn": 48,
+          "tn": 12986,
+          "recall": 0.7209302325581395,
+          "precision": 0.06307222787385554,
+          "fpr": 0.12422444024817912,
+          "f1": 0.11599625818521982,
+          "scenario_recall": {
+            "social_engineering": 0.9571428571428572,
+            "mule_collection": 0.78,
+            "account_takeover": 0.43902439024390244,
+            "card_testing": 0.0
+          }
+        },
+        "block": {
+          "tp": 100,
+          "fp": 1041,
+          "fn": 72,
+          "tn": 13787,
+          "recall": 0.5813953488372093,
+          "precision": 0.0876424189307625,
+          "fpr": 0.07020501753439438,
+          "f1": 0.15232292460015232,
+          "scenario_recall": {
+            "social_engineering": 0.8714285714285714,
+            "mule_collection": 0.58,
+            "account_takeover": 0.24390243902439024,
+            "card_testing": 0.0
+          }
+        },
+        "intervention_rate": 0.3128
+      },
+      "blocks": [
+        {
+          "days": "0-30",
+          "n": 11947,
+          "fraud": 123,
+          "legit_block_rate": 0.3111468200270636,
+          "legit_warn_plus_rate": 0.8338971583220568,
+          "fraud_block_recall": 0.4878048780487805,
+          "fraud_warn_plus_recall": 0.7723577235772358,
+          "risk_roc_auc": 0.5790015072004575
+        },
+        {
+          "days": "30-60",
+          "n": 12151,
+          "fraud": 152,
+          "legit_block_rate": 0.10750895907992333,
+          "legit_warn_plus_rate": 0.594716226352196,
+          "fraud_block_recall": 0.5460526315789473,
+          "fraud_warn_plus_recall": 0.875,
+          "risk_roc_auc": 0.7922842254398392
+        },
+        {
+          "days": "60-90",
+          "n": 11993,
+          "fraud": 67,
+          "legit_block_rate": 0.06791883280228073,
+          "legit_warn_plus_rate": 0.4734194197551568,
+          "fraud_block_recall": 0.5074626865671642,
+          "fraud_warn_plus_recall": 0.9253731343283582,
+          "risk_roc_auc": 0.8667091341881903
+        },
+        {
+          "days": "90-120",
+          "n": 12003,
+          "fraud": 241,
+          "legit_block_rate": 0.06827070226152016,
+          "legit_warn_plus_rate": 0.3530862098282605,
+          "fraud_block_recall": 0.49377593360995853,
+          "fraud_warn_plus_recall": 0.8755186721991701,
+          "risk_roc_auc": 0.8488033056731679
+        },
+        {
+          "days": "120-150",
+          "n": 11906,
+          "fraud": 137,
+          "legit_block_rate": 0.07069419661823434,
+          "legit_warn_plus_rate": 0.3035941881213357,
+          "fraud_block_recall": 0.5547445255474452,
+          "fraud_warn_plus_recall": 0.8394160583941606,
+          "risk_roc_auc": 0.8581830405624574
+        }
+      ]
+    },
+    "43": {
+      "seed": 43,
+      "rows": 60000,
+      "fraud": 720,
+      "full_stream": {
+        "n": 60000,
+        "fraud": 720,
+        "prevalence": 0.012,
+        "risk_pr_auc": 0.042678872708629745,
+        "risk_roc_auc": 0.7667957152496627,
+        "v2_available_rate": 0.8356333333333333,
+        "v2_alone_pr_auc_where_available": 0.11158172294208019,
+        "v2_alone_roc_auc_where_available": 0.8681337332362915,
+        "risk_pr_auc_same_rows": 0.052956671595920504,
+        "risk_roc_auc_same_rows": 0.7918595209235852,
+        "v2_alone_at_threshold": {
+          "tp": 45,
+          "fp": 260,
+          "fn": 535,
+          "tn": 49298,
+          "recall": 0.07758620689655173,
+          "precision": 0.14754098360655737,
+          "fpr": 0.005246377981355179,
+          "f1": 0.10169491525423731
+        },
+        "verdict_counts": {
+          "all": {
+            "APPROVE": 27847,
+            "WARN": 17334,
+            "STEP_UP": 6518,
+            "BLOCK": 8301
+          },
+          "legitimate": {
+            "APPROVE": 27729,
+            "WARN": 17221,
+            "STEP_UP": 6384,
+            "BLOCK": 7946
+          },
+          "fraud": {
+            "APPROVE": 118,
+            "WARN": 113,
+            "STEP_UP": 134,
+            "BLOCK": 355
+          },
+          "social_engineering": {
+            "APPROVE": 21,
+            "WARN": 38,
+            "STEP_UP": 70,
+            "BLOCK": 231
+          },
+          "mule_collection": {
+            "APPROVE": 2,
+            "WARN": 29,
+            "STEP_UP": 35,
+            "BLOCK": 92
+          },
+          "account_takeover": {
+            "APPROVE": 49,
+            "WARN": 38,
+            "STEP_UP": 28,
+            "BLOCK": 29
+          },
+          "card_testing": {
+            "APPROVE": 46,
+            "WARN": 8,
+            "STEP_UP": 1,
+            "BLOCK": 3
+          }
+        },
+        "coverage": {
+          "mean": 93.81238333333333,
+          "median": 97.0,
+          "min": 60,
+          "max": 100,
+          "by_level": {
+            "FULL": {
+              "n": 58001,
+              "mean": 94.78772779779659,
+              "median": 97.0,
+              "min": 76,
+              "max": 100
+            },
+            "PARTIAL": {
+              "n": 1999,
+              "mean": 65.5127563781891,
+              "median": 64.0,
+              "min": 60,
+              "max": 72
+            }
+          },
+          "by_label": {
+            "legitimate": {
+              "mean": 93.81162280701754,
+              "median": 97.0
+            },
+            "fraud": {
+              "mean": 93.875,
+              "median": 96.0
+            }
+          },
+          "by_payee_status": {
+            "NEW_TO_USER_BUT_OBSERVED": {
+              "n": 17726,
+              "mean": 94.21877468125916,
+              "median": 97.0
+            },
+            "PAID_BEFORE": {
+              "n": 13597,
+              "mean": 97.98058395234243,
+              "median": 99.0
+            },
+            "PAID_OFTEN": {
+              "n": 3844,
+              "mean": 98.0582726326743,
+              "median": 99.0
+            },
+            "PAID_ONCE": {
+              "n": 11783,
+              "mean": 97.14003224985149,
+              "median": 97.0
+            },
+            "UNKNOWN": {
+              "n": 13050,
+              "mean": 84.66222222222223,
+              "median": 88.0
+            }
+          }
+        },
+        "evidence_level_counts": {
+          "FULL": 58001,
+          "PARTIAL": 1999
+        },
+        "warn_plus": {
+          "tp": 602,
+          "fp": 31551,
+          "fn": 118,
+          "tn": 27729,
+          "recall": 0.8361111111111111,
+          "precision": 0.018722980748297206,
+          "fpr": 0.5322368421052631,
+          "f1": 0.036625802330179785,
+          "scenario_recall": {
+            "social_engineering": 0.9416666666666667,
+            "mule_collection": 0.9873417721518988,
+            "account_takeover": 0.6597222222222222,
+            "card_testing": 0.20689655172413793
+          }
+        },
+        "step_up_plus": {
+          "tp": 489,
+          "fp": 14330,
+          "fn": 231,
+          "tn": 44950,
+          "recall": 0.6791666666666667,
+          "precision": 0.03299817801471085,
+          "fpr": 0.24173414304993252,
+          "f1": 0.06293841302529121,
+          "scenario_recall": {
+            "social_engineering": 0.8361111111111111,
+            "mule_collection": 0.8037974683544303,
+            "account_takeover": 0.3958333333333333,
+            "card_testing": 0.06896551724137931
+          }
+        },
+        "block": {
+          "tp": 355,
+          "fp": 7946,
+          "fn": 365,
+          "tn": 51334,
+          "recall": 0.4930555555555556,
+          "precision": 0.04276593181544392,
+          "fpr": 0.13404183535762484,
+          "f1": 0.07870524332113955,
+          "scenario_recall": {
+            "social_engineering": 0.6416666666666667,
+            "mule_collection": 0.5822784810126582,
+            "account_takeover": 0.2013888888888889,
+            "card_testing": 0.05172413793103448
+          }
+        },
+        "intervention_rate": 0.5358833333333334
+      },
+      "last25pct": {
+        "n": 15000,
+        "fraud": 242,
+        "prevalence": 0.016133333333333333,
+        "risk_pr_auc": 0.10304142003411125,
+        "risk_roc_auc": 0.8412730901519725,
+        "v2_available_rate": 0.9878,
+        "v2_alone_pr_auc_where_available": 0.23329049053900852,
+        "v2_alone_roc_auc_where_available": 0.8870296876178663,
+        "risk_pr_auc_same_rows": 0.10017301738056686,
+        "risk_roc_auc_same_rows": 0.8427574916513303,
+        "v2_alone_at_threshold": {
+          "tp": 18,
+          "fp": 31,
+          "fn": 211,
+          "tn": 14557,
+          "recall": 0.07860262008733625,
+          "precision": 0.3673469387755102,
+          "fpr": 0.0021250342747463668,
+          "f1": 0.12949640287769784
+        },
+        "verdict_counts": {
+          "all": {
+            "APPROVE": 10099,
+            "WARN": 2743,
+            "STEP_UP": 984,
+            "BLOCK": 1174
+          },
+          "legitimate": {
+            "APPROVE": 10054,
+            "WARN": 2704,
+            "STEP_UP": 937,
+            "BLOCK": 1063
+          },
+          "fraud": {
+            "APPROVE": 45,
+            "WARN": 39,
+            "STEP_UP": 47,
+            "BLOCK": 111
+          },
+          "social_engineering": {
+            "APPROVE": 12,
+            "WARN": 14,
+            "STEP_UP": 26,
+            "BLOCK": 72
+          },
+          "mule_collection": {
+            "APPROVE": 0,
+            "WARN": 10,
+            "STEP_UP": 11,
+            "BLOCK": 28
+          },
+          "account_takeover": {
+            "APPROVE": 18,
+            "WARN": 13,
+            "STEP_UP": 9,
+            "BLOCK": 10
+          },
+          "card_testing": {
+            "APPROVE": 15,
+            "WARN": 2,
+            "STEP_UP": 1,
+            "BLOCK": 1
+          }
+        },
+        "coverage": {
+          "mean": 97.20086666666667,
+          "median": 97.0,
+          "min": 63,
+          "max": 100,
+          "by_level": {
+            "FULL": {
+              "n": 14998,
+              "mean": 97.205094012535,
+              "median": 97.0,
+              "min": 76,
+              "max": 100
+            },
+            "PARTIAL": {
+              "n": 2,
+              "mean": 65.5,
+              "median": 65.5,
+              "min": 63,
+              "max": 68
+            }
+          },
+          "by_label": {
+            "legitimate": {
+              "mean": 97.22272665672855,
+              "median": 97.0
+            },
+            "fraud": {
+              "mean": 95.86776859504133,
+              "median": 97.0
+            }
+          },
+          "by_payee_status": {
+            "NEW_TO_USER_BUT_OBSERVED": {
+              "n": 3254,
+              "mean": 97.63859864781807,
+              "median": 99.0
+            },
+            "PAID_BEFORE": {
+              "n": 5173,
+              "mean": 98.05895998453508,
+              "median": 99.0
+            },
+            "PAID_OFTEN": {
+              "n": 2326,
+              "mean": 98.05288048151333,
+              "median": 99.0
+            },
+            "PAID_ONCE": {
+              "n": 2929,
+              "mean": 97.86104472516217,
+              "median": 99.0
+            },
+            "UNKNOWN": {
+              "n": 1318,
+              "mean": 89.7814871016692,
+              "median": 91.0
+            }
+          }
+        },
+        "evidence_level_counts": {
+          "FULL": 14998,
+          "PARTIAL": 2
+        },
+        "warn_plus": {
+          "tp": 197,
+          "fp": 4704,
+          "fn": 45,
+          "tn": 10054,
+          "recall": 0.8140495867768595,
+          "precision": 0.04019587839216487,
+          "fpr": 0.3187423770158558,
+          "f1": 0.07660898308380323,
+          "scenario_recall": {
+            "social_engineering": 0.9032258064516129,
+            "mule_collection": 1.0,
+            "account_takeover": 0.64,
+            "card_testing": 0.21052631578947367
+          }
+        },
+        "step_up_plus": {
+          "tp": 158,
+          "fp": 2000,
+          "fn": 84,
+          "tn": 12758,
+          "recall": 0.6528925619834711,
+          "precision": 0.0732159406858202,
+          "fpr": 0.1355197181189863,
+          "f1": 0.13166666666666665,
+          "scenario_recall": {
+            "social_engineering": 0.7903225806451613,
+            "mule_collection": 0.7959183673469388,
+            "account_takeover": 0.38,
+            "card_testing": 0.10526315789473684
+          }
+        },
+        "block": {
+          "tp": 111,
+          "fp": 1063,
+          "fn": 131,
+          "tn": 13695,
+          "recall": 0.45867768595041325,
+          "precision": 0.09454855195911414,
+          "fpr": 0.07202873018024122,
+          "f1": 0.15677966101694918,
+          "scenario_recall": {
+            "social_engineering": 0.5806451612903226,
+            "mule_collection": 0.5714285714285714,
+            "account_takeover": 0.2,
+            "card_testing": 0.05263157894736842
+          }
+        },
+        "intervention_rate": 0.3267333333333333
+      },
+      "blocks": [
+        {
+          "days": "0-30",
+          "n": 12009,
+          "fraud": 111,
+          "legit_block_rate": 0.30786686838124055,
+          "legit_warn_plus_rate": 0.8319885695074802,
+          "fraud_block_recall": 0.4144144144144144,
+          "fraud_warn_plus_recall": 0.7747747747747747,
+          "risk_roc_auc": 0.5506599640487689
+        },
+        {
+          "days": "30-60",
+          "n": 12133,
+          "fraud": 134,
+          "legit_block_rate": 0.12592716059671638,
+          "legit_warn_plus_rate": 0.6347195599633303,
+          "fraud_block_recall": 0.5597014925373134,
+          "fraud_warn_plus_recall": 0.8582089552238806,
+          "risk_roc_auc": 0.7698974914576214
+        },
+        {
+          "days": "60-90",
+          "n": 12035,
+          "fraud": 164,
+          "legit_block_rate": 0.0834807514110016,
+          "legit_warn_plus_rate": 0.501389941875158,
+          "fraud_block_recall": 0.5853658536585366,
+          "fraud_warn_plus_recall": 0.9451219512195121,
+          "risk_roc_auc": 0.8787981985202717
+        },
+        {
+          "days": "90-120",
+          "n": 11888,
+          "fraud": 123,
+          "legit_block_rate": 0.0865278368040799,
+          "legit_warn_plus_rate": 0.3765405864853379,
+          "fraud_block_recall": 0.34146341463414637,
+          "fraud_warn_plus_recall": 0.6910569105691057,
+          "risk_roc_auc": 0.7347427086680557
+        },
+        {
+          "days": "120-150",
+          "n": 11935,
+          "fraud": 188,
+          "legit_block_rate": 0.06495275389461139,
+          "legit_warn_plus_rate": 0.3110581425044692,
+          "fraud_block_recall": 0.5106382978723404,
+          "fraud_warn_plus_recall": 0.8563829787234043,
+          "risk_roc_auc": 0.8701144158128196
+        }
+      ]
+    },
+    "44": {
+      "seed": 44,
+      "rows": 60000,
+      "fraud": 720,
+      "full_stream": {
+        "n": 60000,
+        "fraud": 720,
+        "prevalence": 0.012,
+        "risk_pr_auc": 0.04779083701841402,
+        "risk_roc_auc": 0.7690491570137952,
+        "v2_available_rate": 0.8359,
+        "v2_alone_pr_auc_where_available": 0.11250504832207814,
+        "v2_alone_roc_auc_where_available": 0.8589560040642118,
+        "risk_pr_auc_same_rows": 0.05366296648970349,
+        "risk_roc_auc_same_rows": 0.7837502767820301,
+        "v2_alone_at_threshold": {
+          "tp": 49,
+          "fp": 241,
+          "fn": 508,
+          "tn": 49356,
+          "recall": 0.08797127468581688,
+          "precision": 0.16896551724137931,
+          "fpr": 0.0048591648688428735,
+          "f1": 0.11570247933884296
+        },
+        "verdict_counts": {
+          "all": {
+            "APPROVE": 28365,
+            "WARN": 16908,
+            "STEP_UP": 6611,
+            "BLOCK": 8116
+          },
+          "legitimate": {
+            "APPROVE": 28246,
+            "WARN": 16802,
+            "STEP_UP": 6489,
+            "BLOCK": 7743
+          },
+          "fraud": {
+            "APPROVE": 119,
+            "WARN": 106,
+            "STEP_UP": 122,
+            "BLOCK": 373
+          },
+          "social_engineering": {
+            "APPROVE": 19,
+            "WARN": 37,
+            "STEP_UP": 60,
+            "BLOCK": 244
+          },
+          "mule_collection": {
+            "APPROVE": 5,
+            "WARN": 29,
+            "STEP_UP": 31,
+            "BLOCK": 93
+          },
+          "account_takeover": {
+            "APPROVE": 46,
+            "WARN": 33,
+            "STEP_UP": 31,
+            "BLOCK": 34
+          },
+          "card_testing": {
+            "APPROVE": 49,
+            "WARN": 7,
+            "STEP_UP": 0,
+            "BLOCK": 2
+          }
+        },
+        "coverage": {
+          "mean": 93.92838333333333,
+          "median": 97.0,
+          "min": 60,
+          "max": 100,
+          "by_level": {
+            "FULL": {
+              "n": 58002,
+              "mean": 94.90369297610427,
+              "median": 97.0,
+              "min": 76,
+              "max": 100
+            },
+            "PARTIAL": {
+              "n": 1998,
+              "mean": 65.61511511511512,
+              "median": 64.0,
+              "min": 60,
+              "max": 72
+            }
+          },
+          "by_label": {
+            "legitimate": {
+              "mean": 93.93200067476383,
+              "median": 97.0
+            },
+            "fraud": {
+              "mean": 93.63055555555556,
+              "median": 96.0
+            }
+          },
+          "by_payee_status": {
+            "NEW_TO_USER_BUT_OBSERVED": {
+              "n": 17981,
+              "mean": 94.19209165229965,
+              "median": 97.0
+            },
+            "PAID_BEFORE": {
+              "n": 13806,
+              "mean": 97.98399246704331,
+              "median": 99.0
+            },
+            "PAID_OFTEN": {
+              "n": 4030,
+              "mean": 98.08759305210918,
+              "median": 99.0
+            },
+            "PAID_ONCE": {
+              "n": 11887,
+              "mean": 97.12458988811306,
+              "median": 99.0
+            },
+            "UNKNOWN": {
+              "n": 12296,
+              "mean": 84.53602797657774,
+              "median": 88.0
+            }
+          }
+        },
+        "evidence_level_counts": {
+          "FULL": 58002,
+          "PARTIAL": 1998
+        },
+        "warn_plus": {
+          "tp": 601,
+          "fp": 31034,
+          "fn": 119,
+          "tn": 28246,
+          "recall": 0.8347222222222223,
+          "precision": 0.018997945313734787,
+          "fpr": 0.5235155195681511,
+          "f1": 0.03715036315870808,
+          "scenario_recall": {
+            "social_engineering": 0.9472222222222222,
+            "mule_collection": 0.9683544303797469,
+            "account_takeover": 0.6805555555555556,
+            "card_testing": 0.15517241379310345
+          }
+        },
+        "step_up_plus": {
+          "tp": 495,
+          "fp": 14232,
+          "fn": 225,
+          "tn": 45048,
+          "recall": 0.6875,
+          "precision": 0.03361173355062131,
+          "fpr": 0.24008097165991904,
+          "f1": 0.06409011458535638,
+          "scenario_recall": {
+            "social_engineering": 0.8444444444444444,
+            "mule_collection": 0.7848101265822784,
+            "account_takeover": 0.4513888888888889,
+            "card_testing": 0.034482758620689655
+          }
+        },
+        "block": {
+          "tp": 373,
+          "fp": 7743,
+          "fn": 347,
+          "tn": 51537,
+          "recall": 0.5180555555555556,
+          "precision": 0.04595860029571217,
+          "fpr": 0.1306174089068826,
+          "f1": 0.08442734268899954,
+          "scenario_recall": {
+            "social_engineering": 0.6777777777777778,
+            "mule_collection": 0.5886075949367089,
+            "account_takeover": 0.2361111111111111,
+            "card_testing": 0.034482758620689655
+          }
+        },
+        "intervention_rate": 0.52725
+      },
+      "last25pct": {
+        "n": 15000,
+        "fraud": 218,
+        "prevalence": 0.014533333333333334,
+        "risk_pr_auc": 0.1369870886428142,
+        "risk_roc_auc": 0.8413929227091219,
+        "v2_available_rate": 0.9903333333333333,
+        "v2_alone_pr_auc_where_available": 0.25989898100650766,
+        "v2_alone_roc_auc_where_available": 0.8936441120886408,
+        "risk_pr_auc_same_rows": 0.13415061419923352,
+        "risk_roc_auc_same_rows": 0.8412711391052685,
+        "v2_alone_at_threshold": {
+          "tp": 23,
+          "fp": 37,
+          "fn": 190,
+          "tn": 14605,
+          "recall": 0.107981220657277,
+          "precision": 0.38333333333333336,
+          "fpr": 0.002526977188908619,
+          "f1": 0.1684981684981685
+        },
+        "verdict_counts": {
+          "all": {
+            "APPROVE": 10252,
+            "WARN": 2851,
+            "STEP_UP": 886,
+            "BLOCK": 1011
+          },
+          "legitimate": {
+            "APPROVE": 10212,
+            "WARN": 2817,
+            "STEP_UP": 849,
+            "BLOCK": 904
+          },
+          "fraud": {
+            "APPROVE": 40,
+            "WARN": 34,
+            "STEP_UP": 37,
+            "BLOCK": 107
+          },
+          "social_engineering": {
+            "APPROVE": 4,
+            "WARN": 8,
+            "STEP_UP": 18,
+            "BLOCK": 64
+          },
+          "mule_collection": {
+            "APPROVE": 0,
+            "WARN": 11,
+            "STEP_UP": 9,
+            "BLOCK": 32
+          },
+          "account_takeover": {
+            "APPROVE": 22,
+            "WARN": 12,
+            "STEP_UP": 10,
+            "BLOCK": 10
+          },
+          "card_testing": {
+            "APPROVE": 14,
+            "WARN": 3,
+            "STEP_UP": 0,
+            "BLOCK": 1
+          }
+        },
+        "coverage": {
+          "mean": 97.21873333333333,
+          "median": 97.0,
+          "min": 64,
+          "max": 100,
+          "by_level": {
+            "FULL": {
+              "n": 14993,
+              "mean": 97.2321083172147,
+              "median": 97.0,
+              "min": 76,
+              "max": 100
+            },
+            "PARTIAL": {
+              "n": 7,
+              "mean": 68.57142857142857,
+              "median": 71.0,
+              "min": 64,
+              "max": 71
+            }
+          },
+          "by_label": {
+            "legitimate": {
+              "mean": 97.2259504803139,
+              "median": 97.0
+            },
+            "fraud": {
+              "mean": 96.72935779816514,
+              "median": 97.0
+            }
+          },
+          "by_payee_status": {
+            "NEW_TO_USER_BUT_OBSERVED": {
+              "n": 3061,
+              "mean": 97.73570728520092,
+              "median": 99.0
+            },
+            "PAID_BEFORE": {
+              "n": 5223,
+              "mean": 98.04288722956156,
+              "median": 99.0
+            },
+            "PAID_OFTEN": {
+              "n": 2429,
+              "mean": 98.06751749691232,
+              "median": 99.0
+            },
+            "PAID_ONCE": {
+              "n": 2934,
+              "mean": 97.96455351056578,
+              "median": 99.0
+            },
+            "UNKNOWN": {
+              "n": 1353,
+              "mean": 89.72653362897265,
+              "median": 91.0
+            }
+          }
+        },
+        "evidence_level_counts": {
+          "FULL": 14993,
+          "PARTIAL": 7
+        },
+        "warn_plus": {
+          "tp": 178,
+          "fp": 4570,
+          "fn": 40,
+          "tn": 10212,
+          "recall": 0.8165137614678899,
+          "precision": 0.037489469250210614,
+          "fpr": 0.30915978893248547,
+          "f1": 0.07168747482883608,
+          "scenario_recall": {
+            "social_engineering": 0.9574468085106383,
+            "mule_collection": 1.0,
+            "account_takeover": 0.5925925925925926,
+            "card_testing": 0.2222222222222222
+          }
+        },
+        "step_up_plus": {
+          "tp": 144,
+          "fp": 1753,
+          "fn": 74,
+          "tn": 13029,
+          "recall": 0.6605504587155964,
+          "precision": 0.07590933052187665,
+          "fpr": 0.11859017724259234,
+          "f1": 0.13617021276595745,
+          "scenario_recall": {
+            "social_engineering": 0.8723404255319149,
+            "mule_collection": 0.7884615384615384,
+            "account_takeover": 0.37037037037037035,
+            "card_testing": 0.05555555555555555
+          }
+        },
+        "block": {
+          "tp": 107,
+          "fp": 904,
+          "fn": 111,
+          "tn": 13878,
+          "recall": 0.4908256880733945,
+          "precision": 0.10583580613254204,
+          "fpr": 0.06115545934244351,
+          "f1": 0.1741253051261188,
+          "scenario_recall": {
+            "social_engineering": 0.6808510638297872,
+            "mule_collection": 0.6153846153846154,
+            "account_takeover": 0.18518518518518517,
+            "card_testing": 0.05555555555555555
+          }
+        },
+        "intervention_rate": 0.31653333333333333
+      },
+      "blocks": [
+        {
+          "days": "0-30",
+          "n": 11905,
+          "fraud": 176,
+          "legit_block_rate": 0.30573791457072214,
+          "legit_warn_plus_rate": 0.8288856680023873,
+          "fraud_block_recall": 0.6193181818181818,
+          "fraud_warn_plus_recall": 0.9034090909090909,
+          "risk_roc_auc": 0.7014330253683566
+        },
+        {
+          "days": "30-60",
+          "n": 11984,
+          "fraud": 142,
+          "legit_block_rate": 0.1515791251477791,
+          "legit_warn_plus_rate": 0.6339300793784833,
+          "fraud_block_recall": 0.5211267605633803,
+          "fraud_warn_plus_recall": 0.8309859154929577,
+          "risk_roc_auc": 0.7169096745648693
+        },
+        {
+          "days": "60-90",
+          "n": 11961,
+          "fraud": 93,
+          "legit_block_rate": 0.07237950792045837,
+          "legit_warn_plus_rate": 0.5028648466464443,
+          "fraud_block_recall": 0.45161290322580644,
+          "fraud_warn_plus_recall": 0.8279569892473119,
+          "risk_roc_auc": 0.7674305351700244
+        },
+        {
+          "days": "90-120",
+          "n": 12166,
+          "fraud": 123,
+          "legit_block_rate": 0.06593041600930001,
+          "legit_warn_plus_rate": 0.35149049240222535,
+          "fraud_block_recall": 0.4634146341463415,
+          "fraud_warn_plus_recall": 0.7886178861788617,
+          "risk_roc_auc": 0.8277621720001971
+        },
+        {
+          "days": "120-150",
+          "n": 11984,
+          "fraud": 186,
+          "legit_block_rate": 0.060094931344295645,
+          "legit_warn_plus_rate": 0.30547550432276654,
+          "fraud_block_recall": 0.489247311827957,
+          "fraud_warn_plus_recall": 0.8064516129032258,
+          "risk_roc_auc": 0.8369969304073772
+        }
+      ]
+    }
+  },
+  "missing_evidence_checks": {
+    "42": {
+      "graph": {
+        "unavailable_rows": 12020,
+        "risk_median_when_unavailable": 27.0,
+        "risk_median_when_available": 20.0,
+        "share_R0_when_unavailable": 0.0,
+        "share_BLOCK_when_unavailable": 0.0721297836938436,
+        "fraud_rate_when_unavailable": 0.008153078202995009
+      },
+      "message_pressure": {
+        "unavailable_rows": 27162,
+        "risk_median_when_unavailable": 20.0,
+        "risk_median_when_available": 23.0,
+        "share_R0_when_unavailable": 0.3379721669980119,
+        "share_BLOCK_when_unavailable": 0.10886532655916353,
+        "fraud_rate_when_unavailable": 0.014137397835210957
+      },
+      "ml_classifier": {
+        "unavailable_rows": 9799,
+        "risk_median_when_unavailable": 32.0,
+        "risk_median_when_available": 20.0,
+        "share_R0_when_unavailable": 0.0575568935605674,
+        "share_BLOCK_when_unavailable": 0.26247576283294216,
+        "fraud_rate_when_unavailable": 0.018369221349117257
+      },
+      "payer_behaviour": {
+        "unavailable_rows": 1997,
+        "risk_median_when_unavailable": 14.0,
+        "risk_median_when_available": 22.0,
+        "share_R0_when_unavailable": 0.09263895843765649,
+        "share_BLOCK_when_unavailable": 0.23785678517776665,
+        "fraud_rate_when_unavailable": 0.011016524787180772
+      },
+      "stated_intent": {
+        "unavailable_rows": 34914,
+        "risk_median_when_unavailable": 20.0,
+        "risk_median_when_available": 33.0,
+        "share_R0_when_unavailable": 0.3765251761471043,
+        "share_BLOCK_when_unavailable": 0.09062267285329667,
+        "fraud_rate_when_unavailable": 0.012315976399152202
+      }
+    },
+    "43": {
+      "graph": {
+        "unavailable_rows": 13050,
+        "risk_median_when_unavailable": 27.0,
+        "risk_median_when_available": 20.0,
+        "share_R0_when_unavailable": 0.0,
+        "share_BLOCK_when_unavailable": 0.07670498084291187,
+        "fraud_rate_when_unavailable": 0.00789272030651341
+      },
+      "message_pressure": {
+        "unavailable_rows": 27278,
+        "risk_median_when_unavailable": 22.0,
+        "risk_median_when_available": 23.0,
+        "share_R0_when_unavailable": 0.3178752107925801,
+        "share_BLOCK_when_unavailable": 0.11855707896473348,
+        "fraud_rate_when_unavailable": 0.014957108292396803
+      },
+      "ml_classifier": {
+        "unavailable_rows": 9862,
+        "risk_median_when_unavailable": 30.0,
+        "risk_median_when_available": 20.0,
+        "share_R0_when_unavailable": 0.050192658689920906,
+        "share_BLOCK_when_unavailable": 0.25795984587304804,
+        "fraud_rate_when_unavailable": 0.014195903467856418
+      },
+      "payer_behaviour": {
+        "unavailable_rows": 1999,
+        "risk_median_when_unavailable": 14.0,
+        "risk_median_when_available": 23.0,
+        "share_R0_when_unavailable": 0.08554277138569284,
+        "share_BLOCK_when_unavailable": 0.2381190595297649,
+        "fraud_rate_when_unavailable": 0.008504252126063032
+      },
+      "stated_intent": {
+        "unavailable_rows": 34695,
+        "risk_median_when_unavailable": 20.0,
+        "risk_median_when_available": 36.0,
+        "share_R0_when_unavailable": 0.36054186482202044,
+        "share_BLOCK_when_unavailable": 0.09747802276985157,
+        "fraud_rate_when_unavailable": 0.011817264735552674
+      }
+    },
+    "44": {
+      "graph": {
+        "unavailable_rows": 12296,
+        "risk_median_when_unavailable": 27.0,
+        "risk_median_when_available": 20.0,
+        "share_R0_when_unavailable": 0.0,
+        "share_BLOCK_when_unavailable": 0.0753903708523097,
+        "fraud_rate_when_unavailable": 0.007563435263500325
+      },
+      "message_pressure": {
+        "unavailable_rows": 26989,
+        "risk_median_when_unavailable": 22.0,
+        "risk_median_when_available": 23.0,
+        "share_R0_when_unavailable": 0.3247989921820001,
+        "share_BLOCK_when_unavailable": 0.11271258660935937,
+        "fraud_rate_when_unavailable": 0.014153914557782801
+      },
+      "ml_classifier": {
+        "unavailable_rows": 9846,
+        "risk_median_when_unavailable": 30.0,
+        "risk_median_when_available": 20.0,
+        "share_R0_when_unavailable": 0.0561649400771887,
+        "share_BLOCK_when_unavailable": 0.2558399349989844,
+        "fraud_rate_when_unavailable": 0.016554946171033924
+      },
+      "payer_behaviour": {
+        "unavailable_rows": 1998,
+        "risk_median_when_unavailable": 14.0,
+        "risk_median_when_available": 22.0,
+        "share_R0_when_unavailable": 0.0985985985985986,
+        "share_BLOCK_when_unavailable": 0.22622622622622623,
+        "fraud_rate_when_unavailable": 0.010510510510510511
+      },
+      "stated_intent": {
+        "unavailable_rows": 34842,
+        "risk_median_when_unavailable": 20.0,
+        "risk_median_when_available": 35.0,
+        "share_R0_when_unavailable": 0.3632110671029218,
+        "share_BLOCK_when_unavailable": 0.09376614430859308,
+        "fraud_rate_when_unavailable": 0.011595201193961312
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "generated_utc": "2026-09-19T16:50:55+00:00",
+  "seed": 42,
+  "python": "3.10.12",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "libraries": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0",
+    "matplotlib": "3.10.9"
+  },
+  "artefact_sha256": {
+    "models/risk_model.pkl": "9f5e912ddbda290cb9a1b057692c3cf1714249ac47e48a0aa0f70d4432d3b547",
+    "models/metrics.json": "80ab9897353871ad0d049ef34ae58567fe41501342f173100c4921faefb855c9",
+    "backend/ml/dataset.py": "c890ba4a3cc28c8bd151ce812d9940e3a5d4eeef9b4d27f05c0c734c79cfe8ac",
+    "backend/ml/features.py": "879e8dfdf19f9fed6655c79c8e4d6667dda2300539fe9062cd1d678041700749",
+    "backend/train_model.py": "b7b9c72231c02083bbaee66e34f2e05fe9b75b9bf596d08c694f5c64d15c3c07"
+  },
+  "trained_with": {
+    "python": "3.10.12",
+    "numpy": "2.2.6",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "reproduce": "python scripts/evaluate_model.py --seed 42 --out evaluation"
+}

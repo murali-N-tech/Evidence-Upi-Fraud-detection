@@ -1,0 +1,111 @@
+{
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "source": {
+    "python_source_sha256": "5c87a7f938f8c6a75d1f21eab6b86e95ed12a79cbd218c6c4fda40a306ed2623",
+    "n_files": 79,
+    "git_head_of_snapshot": "9022a9feb65effa32779207e32458c0d37e9bb61"
+  },
+  "finished_utc": "2026-09-22T18:19:06+00:00",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "configs": {
+    "A_v1_baseline": null,
+    "B_core": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee"
+    ],
+    "C_core+relationship": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "relationship"
+    ],
+    "D_core+graph": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "graph"
+    ],
+    "E_core+message": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "message"
+    ],
+    "F_core+link": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "link"
+    ],
+    "G_core+intent": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "intent"
+    ],
+    "H_core+rel+graph": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "relationship",
+      "graph"
+    ],
+    "I_core+rel+graph+msg": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "relationship",
+      "graph",
+      "message"
+    ],
+    "J_core+rel+graph+msg+link": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "relationship",
+      "graph",
+      "message",
+      "link"
+    ],
+    "K_full_v2": [
+      "payer",
+      "amount",
+      "velocity",
+      "payee",
+      "relationship",
+      "graph",
+      "message",
+      "link",
+      "intent"
+    ]
+  }
+}

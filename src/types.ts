@@ -90,9 +90,80 @@ export interface StatementTransaction {
   status: string;
   reference_number?: string;
   source_type: string;
-  raw_line: string;
   txn_type?: string;
+  direction?: "DEBIT" | "CREDIT" | null;
+  counterparty_name?: string | null;
+  counterparty_upi_id?: string | null;
+  validation_status?: "VALID" | "PARTIAL" | null;
+  validation_reasons?: string | null;
   created_at: string;
+}
+
+/** Counts only - the upload no longer returns transaction rows. */
+export interface StatementImportReport {
+  status: "COMPLETE" | "PARTIAL" | "FAILED";
+  source_format: string;
+  source_provider?: string | null;
+  total_rows_detected: number;
+  valid_transactions: number;
+  partial_transactions: number;
+  rejected_transactions: number;
+  duplicate_transactions: number;
+  cross_source_duplicates?: number;
+  ambiguous_cross_source_kept?: number;
+  repeated_rows_in_file: number;
+  stored_transactions: number;
+  debit_transactions: number;
+  credit_transactions: number;
+  unknown_direction: number;
+  missing_timestamp: number;
+  future_timestamp: number;
+  malformed_upi_id: number;
+  upi_linked_transactions: number;
+  upi_transactions?: number;
+  counterparty_vpas_found?: number;
+  distinct_counterparty_vpas?: number;
+  counterparty_names_found?: number;
+  missing_identity?: number;
+  truncated_upi_ids?: number;
+  reversal_transactions?: number;
+  complete_vpas_found?: number;
+  partial_identifiers_found?: number;
+  non_vpa_identifiers_found?: number;
+  reference_ids_found?: number;
+  no_identity_rows?: number;
+  identifier_types?: Record<string, number>;
+  wrapped_narrations_reconstructed?: number;
+  identity_states?: Record<string, number>;
+  provider_confidence?: number | null;
+  provider_evidence?: string[];
+  debits_without_upi_id: number;
+  payee_relationships_updated: number;
+  graph_observations_updated: number;
+  undated_payments_recorded: number;
+  profile_updated: boolean;
+  date_range: { from: string | null; to: string | null };
+  unmapped_columns: string[];
+  warnings: string[];
+}
+
+export type PayeeStatus =
+  | "PAID_BEFORE" | "PAID_ONCE" | "PAID_OFTEN" | "NEW_TO_USER_BUT_OBSERVED"
+  | "UNKNOWN" | "IDENTITY_UNAVAILABLE" | "HISTORY_UNAVAILABLE_DUE_TO_PARTIAL_IMPORT"
+  | "PARTIAL_IDENTITY" | "NAME_ONLY_HISTORY";
+
+export interface PayeeHistorySummary {
+  upi_id: string;
+  paid_before: boolean;
+  payment_count: number;
+  dated_payment_count: number;
+  first_payment_at: string | null;
+  last_payment_at: string | null;
+  total_amount: number;
+  days_since_first_payment: number | null;
+  days_since_last_payment: number | null;
+  relationship_status: string | null;
+  sources: Record<string, number>;
 }
 
 export interface PayeeFinding {
@@ -108,14 +179,18 @@ export interface PayeeReputation {
   first_seen: string | null;
   last_seen: string | null;
   age_days: number | null;
-  payment_count: number;
+  /** Amount/time fields are null when fewer than 5 other payers exist. */
+  payment_count: number | null;
   distinct_payers: number;
   repeat_payers: number;
-  total_amount: number;
+  total_amount: number | null;
+  detail_withheld?: boolean;
   mean_amount: number | null;
   amount_spread: number | null;
   reports: number;
   blocked: boolean;
+  /** Distinct payers per source. Observations, never "verified". */
+  observed_by?: Record<"SYSTEM_CONFIRMED" | "STATEMENT_OBSERVED" | "OTHER_OBSERVED", number>;
 }
 
 /** One evidence family's row, as the payee check publishes it. The payer's own
@@ -150,6 +225,10 @@ export interface PayeeCheckResult {
     signed: boolean;
   };
   reputation: PayeeReputation | null;
+  /** The signed-in payer's own relationship with this payee. */
+  payee_status?: PayeeStatus;
+  history_state?: { state: string; message: string };
+  payee_history?: PayeeHistorySummary | null;
   risk_score: number;
   // The canonical classification. `decision` is the same value under the name
   // the first version of this screen read, and is kept only for that.

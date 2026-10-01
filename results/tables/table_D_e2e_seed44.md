@@ -1,0 +1,17 @@
+| Slice          |     n |   fraud |   Risk PR-AUC |   Risk ROC-AUC |   Classifier-only PR-AUC |   WARN+ recall % |   WARN+ FPR % |   STEP_UP+ recall % |   STEP_UP+ FPR % |   BLOCK recall % |   BLOCK FPR % |   Intervention % |
+|:---------------|------:|--------:|--------------:|---------------:|-------------------------:|-----------------:|--------------:|--------------------:|-----------------:|-----------------:|--------------:|-----------------:|
+| full_stream    | 60000 |     720 |         0.047 |          0.766 |                   0.0356 |            82.22 |         55.13 |               68.19 |            24.07 |            51.94 |        13.09  |            55.46 |
+| test_last25pct | 15000 |     218 |         0.135 |          0.843 |                   0.0837 |            79.82 |         34.69 |               64.68 |            11.89 |            49.54 |         6.116 |            35.35 |
+
+| group              | slice          |     n |   APPROVE |   WARN |   STEP_UP |   BLOCK |
+|:-------------------|:---------------|------:|----------:|-------:|----------:|--------:|
+| account_takeover   | full_stream    |   144 |     31.94 |  23.61 |     22.22 |   22.22 |
+| card_testing       | full_stream    |    58 |     84.48 |  12.07 |      0    |    3.45 |
+| legitimate         | full_stream    | 59280 |     44.87 |  31.07 |     10.98 |   13.09 |
+| mule_collection    | full_stream    |   158 |      6.33 |  17.09 |     16.46 |   60.13 |
+| social_engineering | full_stream    |   360 |      6.39 |   9.17 |     16.39 |   68.06 |
+| account_takeover   | test_last25pct |    54 |     40.74 |  24.07 |     16.67 |   18.52 |
+| card_testing       | test_last25pct |    18 |     77.78 |  16.67 |      0    |    5.56 |
+| legitimate         | test_last25pct | 14782 |     65.31 |  22.8  |      5.77 |    6.12 |
+| mule_collection    | test_last25pct |    52 |      3.85 |  21.15 |     13.46 |   61.54 |
+| social_engineering | test_last25pct |    94 |      6.38 |   6.38 |     18.09 |   69.15 |

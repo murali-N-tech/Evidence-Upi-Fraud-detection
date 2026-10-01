@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload, AlertCircle, FileText, CheckCircle2, ArrowRight, Loader2, FileUp, Info } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import type { StatementImportReport } from "../types";
 
 interface StatementProfilingProps {
   onNavigate?: (page: string) => void;
@@ -16,6 +17,7 @@ export default function StatementProfiling({ onNavigate }: StatementProfilingPro
   const [extractedCount, setExtractedCount] = useState<number>(0);
   const [sourceType, setSourceType] = useState<string>("");
   const [warnings, setWarnings] = useState<string[]>([]);
+  const [report, setReport] = useState<StatementImportReport | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +57,7 @@ export default function StatementProfiling({ onNavigate }: StatementProfilingPro
     setError(null);
     setSuccess(false);
     setWarnings([]);
+    setReport(null);
 
     // No user_id: the server takes the owner from the auth token.
     const formData = new FormData();
@@ -67,8 +70,10 @@ export default function StatementProfiling({ onNavigate }: StatementProfilingPro
         transactions_extracted?: number;
         source_type?: string;
         warnings?: string[];
+        import?: StatementImportReport;
       }>("/api/statement/upload", { method: "POST", body: formData });
-      if (result.profile || (result.transactions_extracted ?? 0) > 0) {
+      setReport(result.import ?? null);
+      if (result.profile || (result.import?.valid_transactions ?? 0) + (result.import?.partial_transactions ?? 0) > 0) {
         setSuccess(true);
         setExtractedCount(result.transactions_extracted || 0);
         setSourceType(result.source_type || "");
@@ -97,7 +102,7 @@ export default function StatementProfiling({ onNavigate }: StatementProfilingPro
         {/* Upload Form Card */}
         <div className="bg-surface border border-line rounded-xl p-6 h-fit" id="upload-card">
           <h2 className="text-xl font-semibold text-ink mb-1">Generate Behaviour Profile</h2>
-          <p className="text-xs text-ink-subtle mb-5">Supports: Google Pay, PhonePe, Paytm, SBI, HDFC, ICICI, Axis, Bank of Baroda, and generic bank PDFs</p>
+          <p className="text-xs text-ink-subtle mb-5">CSV with recognisable column headers (date, amount or debit/credit, direction, UPI ID), and text-based PDF statements. Validated on synthetic fixtures and a small set of real PhonePe/GPay PDF exports; real app PDFs name payees without UPI IDs, so they cannot be matched to a scanned QR. Scanned PDFs are not supported.</p>
           
           <form onSubmit={handleUpload} className="space-y-5">
             <div className="flex items-center">
@@ -189,9 +194,11 @@ export default function StatementProfiling({ onNavigate }: StatementProfilingPro
               <div className="flex items-start gap-4 mb-5">
                 <CheckCircle2 className="h-8 w-8 text-ok shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-lg font-bold text-ok mb-1">Profile Successfully Compiled</h3>
+                  <h3 className="text-lg font-bold text-ok mb-1">
+                    {report?.status === "PARTIAL" ? "Statement partially processed" : "Statement imported"}
+                  </h3>
                   <p className="text-ok/80 text-sm">
-                    Behavior profile generated from <span className="font-bold text-ok">{extractedCount}</span> extracted transactions.
+                    <span className="font-bold text-ok">{extractedCount}</span> new transactions stored; your profile was rebuilt from your full history.
                   </p>
                   {sourceType && (
                     <p className="text-xs text-ok/60 mt-1">
@@ -207,17 +214,53 @@ export default function StatementProfiling({ onNavigate }: StatementProfilingPro
                 </div>
               )}
 
-              {/* Summary stats */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                <div className="bg-surface/60 rounded-lg p-3 border border-line/50">
-                  <div className="text-2xl font-bold text-ink">{extractedCount}</div>
-                  <div className="text-xs text-ok/60">Transactions</div>
+              {/* Import summary - counts only */}
+              {report && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5" id="import-summary">
+                  {([
+                    ["Transactions read", report.total_rows_detected],
+                    ["Transactions imported", report.stored_transactions],
+                    ["UPI transactions", report.upi_transactions ?? 0],
+                    ["Debit transactions", report.debit_transactions],
+                    ["Credit transactions", report.credit_transactions],
+                    ["Reversal transactions", report.reversal_transactions ?? 0],
+                    ["Counterparty names found", report.counterparty_names_found ?? 0],
+                    ["Complete VPAs found", report.complete_vpas_found ?? report.upi_linked_transactions],
+                    ["Partial VPA fragments found", report.partial_identifiers_found ?? 0],
+                    ["Non-VPA identifiers found", report.non_vpa_identifiers_found ?? 0],
+                    ["Rows with no counterparty identity", report.no_identity_rows ?? 0],
+                    ["Rows rejected", report.rejected_transactions],
+                    ["Rows partially parsed", report.partial_transactions],
+                    ["Rows already imported", report.duplicate_transactions],
+                    ["Valid rows", report.valid_transactions],
+                    ["Payees updated", report.payee_relationships_updated],
+                    ["Graph observations", report.graph_observations_updated],
+                    ["Profile", report.profile_updated ? "Rebuilt" : "Not changed"],
+                    ["Source", report.source_provider ?? (sourceType.includes("pdf") ? "PDF" : "CSV")],
+                  ] as const).map(([label, value]) => (
+                    <div key={label} className="bg-surface/60 rounded-lg p-3 border border-line/50">
+                      <div className="text-xl font-bold text-ink">{value}</div>
+                      <div className="text-xs text-ok/60">{label}</div>
+                    </div>
+                  ))}
                 </div>
-                <div className="bg-surface/60 rounded-lg p-3 border border-line/50">
-                  <div className="text-2xl font-bold text-ink">{sourceType.includes("pdf") ? "PDF" : "CSV"}</div>
-                  <div className="text-xs text-ok/60">Format</div>
+              )}
+              {report && (report.unknown_direction > 0 || report.missing_timestamp > 0 ||
+                report.malformed_upi_id > 0 || report.future_timestamp > 0 ||
+                (report.partial_identifiers_found ?? 0) > 0 || (report.non_vpa_identifiers_found ?? 0) > 0 ||
+                (report.no_identity_rows ?? 0) > 0 ||
+                (report.cross_source_duplicates ?? 0) > 0 || (report.ambiguous_cross_source_kept ?? 0) > 0) && (
+                <div className="bg-amber-500/10 border border-amber-500/20 text-warn text-xs rounded-lg p-3 mb-4 space-y-1">
+                  {report.unknown_direction > 0 && <p>{report.unknown_direction} row(s): paid/received could not be read - kept out of spending and payee history.</p>}
+                  {report.missing_timestamp > 0 && <p>{report.missing_timestamp} row(s): date could not be read - not used for timing features.</p>}
+                  {report.future_timestamp > 0 && <p>{report.future_timestamp} row(s) are dated after today - not treated as past payments.</p>}
+                  {report.malformed_upi_id > 0 && <p>{report.malformed_upi_id} row(s): the UPI ID was not a valid address.</p>}
+                  {((report.partial_identifiers_found ?? 0) + (report.non_vpa_identifiers_found ?? 0)) > 0 && <p>Some bank statements truncate UPI identifiers. Partial identifiers are retained for behavioral history but are not used for exact VPA matching.</p>}
+                  {(report.no_identity_rows ?? 0) > 0 && <p>{report.no_identity_rows} row(s) carry no counterparty name or identifier (e.g. interest, reversals, cash).</p>}
+                  {(report.cross_source_duplicates ?? 0) > 0 && <p>{report.cross_source_duplicates} payment(s) were already imported from another statement and were not counted again.</p>}
+                  {(report.ambiguous_cross_source_kept ?? 0) > 0 && <p>{report.ambiguous_cross_source_kept} row(s) looked similar to an earlier import but could not be confirmed as the same payment, so they were kept.</p>}
                 </div>
-              </div>
+              )}
 
               <button
                 onClick={() => onNavigate?.("User Profile")}

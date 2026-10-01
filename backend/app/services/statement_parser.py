@@ -157,6 +157,10 @@ class _Transaction:
     txn_type: Optional[str] = None
     source_file: str = ""
     raw_line: str = ""
+    # An amount whose direction the row does not state. Kept so the row is
+    # reported (PARTIAL, direction unknown) instead of being defaulted to a
+    # debit or dropped.
+    amount: Optional[float] = None
 
 
 def _clean_amount(s: str) -> Optional[float]:
@@ -230,14 +234,18 @@ def _extract_from_tables(pdf: "pdfplumber.PDF", source_name: str) -> List[_Trans
                 credit = _clean_amount(row[credit_idx]) if credit_idx is not None and credit_idx < len(row) else None
                 balance = _clean_amount(row[balance_idx]) if balance_idx is not None and balance_idx < len(row) else None
 
+                unknown_amount = None
                 if amount_idx is not None and debit is None and credit is None:
                     amt = _clean_amount(row[amount_idx]) if amount_idx < len(row) else None
                     ttype = row[type_idx].upper() if type_idx is not None and type_idx < len(row) else ""
                     if amt is not None:
                         if "CR" in ttype or "CREDIT" in ttype or _CREDIT_HINTS.search(desc):
                             credit = abs(amt)
-                        else:
+                        elif "DR" in ttype or "DEBIT" in ttype or _DEBIT_HINTS.search(desc):
                             debit = abs(amt)
+                        else:
+                            # Neither stated nor worded: unknown, not DEBIT.
+                            unknown_amount = abs(amt)
 
                 full_line = " ".join(row)
                 vpa_match = _VPA_RE.search(full_line)
@@ -251,6 +259,7 @@ def _extract_from_tables(pdf: "pdfplumber.PDF", source_name: str) -> List[_Trans
                     txn_type = "CREDIT"
 
                 txns.append(_Transaction(
+                    amount=unknown_amount,
                     date=_parse_date_plumber(raw_date),
                     description=desc,
                     debit=debit,
@@ -297,16 +306,21 @@ def _extract_from_text(pdf: "pdfplumber.PDF", source_name: str) -> List[_Transac
                         debit = abs(val)
                     elif tag == "CR" or _CREDIT_HINTS.search(desc):
                         credit = abs(val)
+                unknown_amount = None
                 if debit is None and credit is None and txn_amounts:
                     val = txn_amounts[0][0]
                     if _CREDIT_HINTS.search(desc):
                         credit = abs(val)
                     else:
-                        debit = abs(val)
+                        # No DR/CR tag and no wording: unknown, not DEBIT.
+                        unknown_amount = abs(val)
+            else:
+                unknown_amount = None
 
             txn_type = "DEBIT" if debit else ("CREDIT" if credit else None)
 
             txns.append(_Transaction(
+                amount=unknown_amount,
                 date=_parse_date_plumber(date_match.group(0)),
                 description=desc,
                 debit=debit,
@@ -551,6 +565,8 @@ def _txn_to_dict(t: _Transaction) -> dict[str, Any] | None:
         amount, txn_type = t.debit, "DEBIT"
     elif t.credit and t.credit > 0:
         amount, txn_type = t.credit, "CREDIT"
+    elif t.amount and t.amount > 0:
+        amount, txn_type = t.amount, None
     else:
         return None
 
@@ -560,10 +576,13 @@ def _txn_to_dict(t: _Transaction) -> dict[str, Any] | None:
     # Build the timestamp from the date plus the clock time when the statement
     # gave one. Defaulting every PDF transaction to noon made most_active_hour
     # and night_transactions meaningless for PDF-sourced profiles.
-    date_part = t.date or datetime.utcnow().strftime("%Y-%m-%d")
+    # No date means no timestamp. This used to substitute TODAY, which put
+    # every undated row at the moment of upload - a payment that "happened"
+    # after the statement was produced, inside every velocity window.
+    date_part = t.date
     timestamp = date_part
-    time_known = True
-    if len(date_part) == 10 and "T" not in date_part:
+    time_known = bool(date_part)
+    if date_part and len(date_part) == 10 and "T" not in date_part:
         clock = _parse_clock(t.time_str)
         if clock:
             timestamp = f"{date_part}T{clock}"
@@ -576,14 +595,14 @@ def _txn_to_dict(t: _Transaction) -> dict[str, Any] | None:
             time_known = False
 
     return {
-        "timestamp": _normalize_timestamp(timestamp),
+        "timestamp": _normalize_timestamp(timestamp) if timestamp else None,
         "amount": amount,
         "merchant": t.description[:80] if t.description else "UNKNOWN_MERCHANT",
         "upi_id": t.vpa,
         "status": "SUCCESS",
         "reference_number": t.upi_ref,
         "raw_line": t.raw_line,
-        "txn_type": t.txn_type or txn_type,
+        "txn_type": txn_type and (t.txn_type or txn_type),
         "time_known": time_known,
     }
 
@@ -605,6 +624,11 @@ def _parse_pdf_with_pdfplumber(content: bytes, source_name: str = "statement.pdf
     try:
         pdf = pdfplumber.open(tmp_path)
     except Exception as e:
+        # The copy is removed on this path too; it used to be left behind.
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
         return {
             "source_type": "pdf",
             "transactions": [],
@@ -656,6 +680,11 @@ def _parse_pdf_with_pdfplumber(content: bytes, source_name: str = "statement.pdf
             if key not in seen:
                 seen.add(key)
                 unique.append(t)
+        merged = len(best_txns) - len(unique)
+        if merged:
+            # Reported, not silent. Identical rows here are usually one row
+            # read twice by an overlapping strategy, but the user is told.
+            warnings.append(f"{merged} identical PDF row(s) were read as one.")
 
         # Convert to output dict format, dropping headers and zero-value rows
         transactions = [d for d in (_txn_to_dict(t) for t in unique) if d is not None]
@@ -805,112 +834,18 @@ def parse_statement_file(filename: str, content: bytes) -> dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════
 
 def _parse_csv_statement(content: bytes) -> list[dict[str, Any]]:
-    decoded = content.decode("utf-8-sig")
-    reader = csv.DictReader(io.StringIO(decoded))
-    rows = list(reader)
+    """Legacy entry point, now a thin wrapper over the canonical CSV adapter.
 
-    if not rows:
-        return []
+    The old parser matched headers by substring, ignored a `direction`
+    column (every CREDIT became a DEBIT), never read a `counterparty` column,
+    and turned unreadable dates into the time of upload. The adapter in
+    backend/app/ingestion replaces all of it; this keeps the old return shape
+    for scripts that still call parse_statement_file.
+    """
+    from backend.app.ingestion.adapters.csv_generic import parse_csv
 
-    records: list[dict[str, Any]] = []
-    for row in rows:
-        normalized = {str(k).strip().lower(): v for k, v in row.items() if k}
-
-        # Statements commonly split date and time into two columns. The old
-        # code took whichever matched first and dropped the other, so every
-        # transaction landed at 00:00 and the whole day/night profile was a
-        # constant. Collect both, then join them.
-        date_value = None
-        time_value = None
-        for k, v in normalized.items():
-            if "time" in k and not any(x in k for x in ("timestamp", "datetime")):
-                if time_value is None:
-                    time_value = v
-            elif any(x in k for x in ("date", "timestamp", "datetime")):
-                if date_value is None:
-                    date_value = v
-        raw_timestamp = _join_values(date_value, time_value)
-
-        # A single `timestamp`/`datetime` column carries the clock time inside
-        # it. The loop above deliberately routes those to date_value, so
-        # `time_value` stays None and the row was recorded as time-unknown -
-        # discarding every hour statistic for CSV-sourced profiles. Look at
-        # what the value actually contains instead of which column it came from.
-        has_clock = bool(time_value) or bool(
-            re.search(r"\d{1,2}:\d{2}", str(raw_timestamp or ""))
-        )
-
-        # Debit and credit columns mean opposite things; keep the direction.
-        amount_value = None
-        txn_type = "DEBIT"
-        for k in normalized.keys():
-            if any(x in k for x in ("debit", "withdrawal")):
-                if _normalize_amount(normalized[k]) not in (None, 0.0):
-                    amount_value, txn_type = normalized[k], "DEBIT"
-                    break
-        if amount_value is None:
-            for k in normalized.keys():
-                if any(x in k for x in ("credit", "deposit")):
-                    if _normalize_amount(normalized[k]) not in (None, 0.0):
-                        amount_value, txn_type = normalized[k], "CREDIT"
-                        break
-        if amount_value is None:
-            for k in normalized.keys():
-                if "amount" in k:
-                    amount_value = normalized[k]
-                    break
-        for k in normalized.keys():
-            if k in ("type", "txn_type", "transaction_type", "dr_cr", "drcr"):
-                marker = str(normalized[k]).strip().upper()
-                if marker.startswith(("CR", "CREDIT")):
-                    txn_type = "CREDIT"
-                elif marker.startswith(("DR", "DEBIT")):
-                    txn_type = "DEBIT"
-                break
-
-        merchant = "UNKNOWN_MERCHANT"
-        for k in normalized.keys():
-            if any(x in k for x in ["merchant", "payee", "description", "particulars", "narration", "receiver", "details"]):
-                merchant = normalized[k]
-                break
-
-        upi_id = None
-        for k in normalized.keys():
-            if any(x in k for x in ["upi", "vpa"]):
-                upi_id = normalized[k]
-                break
-                
-        status = normalized.get("status") or "SUCCESS"
-        reference = None
-        for k in normalized.keys():
-            if any(x in k for x in ["reference", "utr", "txn", "transaction_id"]):
-                reference = normalized[k]
-                break
-
-        if not amount_value:
-            continue
-
-        merchant_text = str(merchant).strip()
-        if _looks_like_header(merchant_text):
-            continue
-
-        records.append(
-            {
-                "timestamp": _normalize_timestamp(raw_timestamp),
-                "time_known": has_clock,
-                "amount": _normalize_amount(amount_value),
-                "merchant": merchant_text,
-                "upi_id": _clean_optional(upi_id),
-                "status": str(status).upper(),
-                "reference_number": _clean_optional(reference),
-                "raw_line": str(row),
-                "txn_type": txn_type,
-            }
-        )
-
-    return _dedupe_transactions(
-        [tx for tx in records if tx["amount"] is not None and tx["amount"] > 0]
-    )
+    rows = parse_csv(content)["transactions"]
+    return [tx.as_store_row() for tx in rows if tx.amount is not None and tx.amount > 0]
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -919,8 +854,11 @@ def _parse_csv_statement(content: bytes) -> list[dict[str, Any]]:
 
 def _detect_pdf_provider(full_text: str) -> str | None:
     normalized = full_text.lower()
+    # Whole words only. Substring matching named any statement mentioning a
+    # payee at "@okaxis" an Axis Bank statement and "@oksbi" an SBI one.
     for provider, signatures in PROVIDER_SIGNATURES.items():
-        if any(signature in normalized for signature in signatures):
+        if any(re.search(rf"(?<![a-z0-9]){re.escape(sig)}(?![a-z0-9])", normalized)
+               for sig in signatures):
             return provider
     return None
 
@@ -1165,7 +1103,9 @@ def _direction_from_text(text: str) -> str:
         return "DEBIT"
     if _CREDIT_WORDS.search(body):
         return "CREDIT"
-    return "DEBIT"
+    # Unknown, not DEBIT. The canonical pipeline marks the row PARTIAL and
+    # keeps it out of spending and outgoing-payee history.
+    return None
 
 
 def _transaction_from_text(text: str) -> dict[str, Any] | None:
@@ -1579,15 +1519,19 @@ def generate_behavior_profile(transactions: list[dict[str, Any]]) -> dict[str, A
     df["status"] = df["status"].fillna("UNKNOWN").str.upper()
     df["upi_id"] = df["upi_id"].fillna("")
     if "txn_type" not in df.columns:
-        df["txn_type"] = "DEBIT"
-    df["txn_type"] = df["txn_type"].fillna("DEBIT").astype(str).str.upper()
+        df["txn_type"] = "DEBIT"   # rows written before direction was recorded
+    # A row whose direction could not be read is UNKNOWN, never DEBIT: a
+    # misread credit in the spending baseline inflates avg/max amount.
+    df["txn_type"] = df["txn_type"].fillna("UNKNOWN").astype(str).str.upper()
+    if "validation_status" in df.columns:
+        df = df[df["validation_status"].fillna("VALID") != "REJECTED"].copy()
 
     # Spending behaviour is built from money going OUT. Including credits
     # inflates avg_amount and max_amount, and those two feed the highest
     # weighted rules in the risk engine.
     spend = df[df["txn_type"] == "DEBIT"]
     if spend.empty:
-        spend = df
+        spend = df[df["txn_type"] != "UNKNOWN"]
 
     dated = df.loc[df["timestamp"].notna()]
 
@@ -1663,6 +1607,9 @@ def generate_behavior_profile(transactions: list[dict[str, Any]]) -> dict[str, A
         "transaction_count": int(len(df)),
         "debit_count": int((df["txn_type"] == "DEBIT").sum()),
         "credit_count": int((df["txn_type"] == "CREDIT").sum()),
+        # Rows kept but excluded from spending because their direction could
+        # not be read. Reported so the gap is visible, not absorbed.
+        "unknown_direction_count": int((df["txn_type"] == "UNKNOWN").sum()),
         "avg_amount": float(round(spend["amount"].mean(), 2)),
         # The model's amount_over_user_avg feature is trained against a MEDIAN
         # (see backend/ml/features.py). A mean on a long-tailed spend
@@ -1714,13 +1661,18 @@ def generate_behavior_profile(transactions: list[dict[str, Any]]) -> dict[str, A
 # UTILITY FUNCTIONS
 # ═══════════════════════════════════════════════════════════════════════════
 
-def _normalize_timestamp(value: Any) -> str:
+def _normalize_timestamp(value: Any) -> str | None:
+    """ISO timestamp, or None when the value cannot be read.
+
+    Every failure path used to return datetime.utcnow() - an invented
+    timestamp indistinguishable from a real one.
+    """
     if value is None:
-        return datetime.utcnow().isoformat()
+        return None
 
     text = str(value).strip()
     if not text:
-        return datetime.utcnow().isoformat()
+        return None
 
     for pattern in DATE_PATTERNS:
         try:
@@ -1736,7 +1688,7 @@ def _normalize_timestamp(value: Any) -> str:
     iso_like = bool(re.match(r"^\d{4}-\d{2}-\d{2}([T ]|$)", text))
     parsed = pd.to_datetime(text, errors="coerce", dayfirst=not iso_like)
     if pd.isna(parsed):
-        return datetime.utcnow().isoformat()
+        return None
     return parsed.isoformat()
 
 

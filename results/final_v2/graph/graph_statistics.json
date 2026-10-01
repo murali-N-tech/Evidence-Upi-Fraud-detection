@@ -1,0 +1,275 @@
+{
+  "42": {
+    "seed": 42,
+    "payments_observed": 60000,
+    "payments_on_edges": 60000,
+    "payer_nodes": 1997,
+    "payee_nodes": 12020,
+    "nodes_total": 14017,
+    "edges_payer_payee_pairs": 29393,
+    "repeat_relationships_edges_with_2plus_payments": 11952,
+    "repeat_relationship_share": 0.4066274282992549,
+    "single_payment_relationships": 17441,
+    "payer_out_degree_distinct_payees": {
+      "mean": 14.7185778668002,
+      "median": 13.0,
+      "p95": 30.0,
+      "max": 55
+    },
+    "payee_in_degree_distinct_payers": {
+      "mean": 2.4453410981697172,
+      "median": 1.0,
+      "p95": 4.0,
+      "max": 1480
+    },
+    "payments_per_edge": {
+      "mean": 2.041302350899874,
+      "median": 1.0,
+      "p95": 6.0,
+      "max": 22
+    },
+    "components_in_store_union_find": 7,
+    "largest_component_store": 14000,
+    "component_sizes_store_top5": [
+      14000,
+      4,
+      3,
+      3,
+      3
+    ],
+    "components_independent_rebuild": 7,
+    "largest_component_independent": 14000,
+    "union_find_nodes_store": 14017,
+    "union_find_nodes_independent": 14017,
+    "payee_cache_rows": 12020,
+    "payee_reputation_rows": 12020,
+    "cache_payer_count_matches_edges": true,
+    "payees_with_10plus_payers": 313,
+    "payees_repeat_ratio_below_0.1_with_10plus_payers": 30,
+    "components_agree": true,
+    "assessment_time": {
+      "graph_evidence_available_rate": 0.7996666666666666,
+      "graph_available_rate_by_label": {
+        "legitimate": 0.7988866396761134,
+        "fraud": 0.8638888888888889
+      },
+      "positional_finding_fired": {
+        "fraud": 1,
+        "legitimate": 0
+      },
+      "positional_by_scenario": {
+        "mule_collection": 1
+      },
+      "rows_with_graph_shape_findings": 17181,
+      "relationship_state_counts": {
+        "NEW_TO_USER_BUT_OBSERVED": 17373,
+        "PAID_BEFORE": 14315,
+        "UNKNOWN": 12020,
+        "PAID_ONCE": 11952,
+        "PAID_OFTEN": 4340
+      },
+      "relationship_state_by_label": {
+        "0": {
+          "NEW_TO_USER_BUT_OBSERVED": 16873,
+          "PAID_BEFORE": 14263,
+          "UNKNOWN": 11922,
+          "PAID_ONCE": 11894,
+          "PAID_OFTEN": 4328
+        },
+        "1": {
+          "NEW_TO_USER_BUT_OBSERVED": 500,
+          "UNKNOWN": 98,
+          "PAID_ONCE": 58,
+          "PAID_BEFORE": 52,
+          "PAID_OFTEN": 12
+        }
+      },
+      "graph_finding_codes": {
+        "graph_payee_shape": 17181,
+        "graph_payer_overlap": 1
+      }
+    }
+  },
+  "43": {
+    "seed": 43,
+    "payments_observed": 60000,
+    "payments_on_edges": 60000,
+    "payer_nodes": 1999,
+    "payee_nodes": 13050,
+    "nodes_total": 15049,
+    "edges_payer_payee_pairs": 30776,
+    "repeat_relationships_edges_with_2plus_payments": 11783,
+    "repeat_relationship_share": 0.3828632700805823,
+    "single_payment_relationships": 18993,
+    "payer_out_degree_distinct_payees": {
+      "mean": 15.395697848924462,
+      "median": 14.0,
+      "p95": 31.0,
+      "max": 54
+    },
+    "payee_in_degree_distinct_payers": {
+      "mean": 2.358314176245211,
+      "median": 1.0,
+      "p95": 4.0,
+      "max": 1422
+    },
+    "payments_per_edge": {
+      "mean": 1.949571094359241,
+      "median": 1.0,
+      "p95": 5.0,
+      "max": 22
+    },
+    "components_in_store_union_find": 8,
+    "largest_component_store": 15030,
+    "component_sizes_store_top5": [
+      15030,
+      3,
+      3,
+      3,
+      3
+    ],
+    "components_independent_rebuild": 8,
+    "largest_component_independent": 15030,
+    "union_find_nodes_store": 15049,
+    "union_find_nodes_independent": 15049,
+    "payee_cache_rows": 13050,
+    "payee_reputation_rows": 13050,
+    "cache_payer_count_matches_edges": true,
+    "payees_with_10plus_payers": 321,
+    "payees_repeat_ratio_below_0.1_with_10plus_payers": 30,
+    "components_agree": true,
+    "assessment_time": {
+      "graph_evidence_available_rate": 0.7825,
+      "graph_available_rate_by_label": {
+        "legitimate": 0.7815958164642375,
+        "fraud": 0.8569444444444444
+      },
+      "positional_finding_fired": {
+        "fraud": 4,
+        "legitimate": 0
+      },
+      "positional_by_scenario": {
+        "mule_collection": 4
+      },
+      "rows_with_graph_shape_findings": 16642,
+      "relationship_state_counts": {
+        "NEW_TO_USER_BUT_OBSERVED": 17726,
+        "PAID_BEFORE": 13597,
+        "UNKNOWN": 13050,
+        "PAID_ONCE": 11783,
+        "PAID_OFTEN": 3844
+      },
+      "relationship_state_by_label": {
+        "0": {
+          "NEW_TO_USER_BUT_OBSERVED": 17235,
+          "PAID_BEFORE": 13540,
+          "UNKNOWN": 12947,
+          "PAID_ONCE": 11723,
+          "PAID_OFTEN": 3835
+        },
+        "1": {
+          "NEW_TO_USER_BUT_OBSERVED": 491,
+          "UNKNOWN": 103,
+          "PAID_ONCE": 60,
+          "PAID_BEFORE": 57,
+          "PAID_OFTEN": 9
+        }
+      },
+      "graph_finding_codes": {
+        "graph_payee_shape": 16642,
+        "graph_payer_overlap": 4
+      }
+    }
+  },
+  "44": {
+    "seed": 44,
+    "payments_observed": 60000,
+    "payments_on_edges": 60000,
+    "payer_nodes": 1998,
+    "payee_nodes": 12296,
+    "nodes_total": 14294,
+    "edges_payer_payee_pairs": 30277,
+    "repeat_relationships_edges_with_2plus_payments": 11887,
+    "repeat_relationship_share": 0.39260825048716846,
+    "single_payment_relationships": 18390,
+    "payer_out_degree_distinct_payees": {
+      "mean": 15.153653653653654,
+      "median": 14.0,
+      "p95": 30.0,
+      "max": 51
+    },
+    "payee_in_degree_distinct_payers": {
+      "mean": 2.462345478204294,
+      "median": 1.0,
+      "p95": 4.0,
+      "max": 1234
+    },
+    "payments_per_edge": {
+      "mean": 1.9817022822604617,
+      "median": 1.0,
+      "p95": 6.0,
+      "max": 21
+    },
+    "components_in_store_union_find": 5,
+    "largest_component_store": 14279,
+    "component_sizes_store_top5": [
+      14279,
+      7,
+      3,
+      3,
+      2
+    ],
+    "components_independent_rebuild": 5,
+    "largest_component_independent": 14279,
+    "union_find_nodes_store": 14294,
+    "union_find_nodes_independent": 14294,
+    "payee_cache_rows": 12296,
+    "payee_reputation_rows": 12296,
+    "cache_payer_count_matches_edges": true,
+    "payees_with_10plus_payers": 300,
+    "payees_repeat_ratio_below_0.1_with_10plus_payers": 23,
+    "components_agree": true,
+    "assessment_time": {
+      "graph_evidence_available_rate": 0.7950666666666667,
+      "graph_available_rate_by_label": {
+        "legitimate": 0.7941464237516869,
+        "fraud": 0.8708333333333333
+      },
+      "positional_finding_fired": {
+        "fraud": 13,
+        "legitimate": 0
+      },
+      "positional_by_scenario": {
+        "mule_collection": 13
+      },
+      "rows_with_graph_shape_findings": 17078,
+      "relationship_state_counts": {
+        "NEW_TO_USER_BUT_OBSERVED": 17981,
+        "PAID_BEFORE": 13806,
+        "UNKNOWN": 12296,
+        "PAID_ONCE": 11887,
+        "PAID_OFTEN": 4030
+      },
+      "relationship_state_by_label": {
+        "0": {
+          "NEW_TO_USER_BUT_OBSERVED": 17489,
+          "PAID_BEFORE": 13740,
+          "UNKNOWN": 12203,
+          "PAID_ONCE": 11836,
+          "PAID_OFTEN": 4012
+        },
+        "1": {
+          "NEW_TO_USER_BUT_OBSERVED": 492,
+          "UNKNOWN": 93,
+          "PAID_BEFORE": 66,
+          "PAID_ONCE": 51,
+          "PAID_OFTEN": 18
+        }
+      },
+      "graph_finding_codes": {
+        "graph_payee_shape": 17078,
+        "graph_payer_overlap": 13
+      }
+    }
+  }
+}

@@ -1,0 +1,474 @@
+{
+  "summary": {
+    "PASS": 11,
+    "FAIL": 0,
+    "WARNING": 5,
+    "INFO": 1
+  },
+  "any_fail": false,
+  "items": [
+    {
+      "item": "no_test_rows_in_training_or_validation",
+      "status": "PASS",
+      "check": "Recompute the two-stage stratified split for every seed; train/val/test index sets must be disjoint.",
+      "evidence": {
+        "42": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 355
+        },
+        "43": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 371
+        },
+        "44": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 362
+        },
+        "45": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 363
+        },
+        "46": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 341
+        },
+        "47": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 360
+        },
+        "48": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 352
+        },
+        "49": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 383
+        },
+        "50": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 355
+        },
+        "51": {
+          "train": 72000,
+          "val": 18000,
+          "test": 30000,
+          "overlaps": 0,
+          "test_fraud": 359
+        }
+      }
+    },
+    {
+      "item": "threshold_selected_on_validation_only",
+      "status": "PASS",
+      "check": "In fit_select_evaluate the threshold is computed from validation probabilities (recall_at_fpr, FPR<=1%) and rounded to 4 d.p. before test probabilities are computed; every fit must satisfy validation FPR<=1%. Test FPR above 1% on some fits shows the test split was not used to tune it.",
+      "evidence": {
+        "code_order_ok": true,
+        "fits": 110,
+        "fits_val_fpr_le_1pct": 110,
+        "fits_test_fpr_above_1pct": 56,
+        "max_test_fpr": 0.0120778651192604
+      }
+    },
+    {
+      "item": "no_test_derived_preprocessing",
+      "status": "PASS",
+      "check": "The learner has no fitted scaler/imputer; HistGradientBoosting bins, early-stopping hold-out and the 5-fold isotonic calibration are all fitted inside the training split (CalibratedClassifierCV.fit(X_tr)). Missing values are routed natively.",
+      "evidence": {
+        "learner": "CalibratedClassifierCV(HistGradientBoostingClassifier(...), isotonic, cv=5).fit(train)"
+      }
+    },
+    {
+      "item": "no_best_seed_selection",
+      "status": "PASS",
+      "check": "All ten seeds are summarised (mean, sd, min, max); seed 42 is reported as the original baseline only.",
+      "evidence": {
+        "seeds": [
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51
+        ],
+        "rows_per_seed": {
+          "42": 11,
+          "43": 11,
+          "44": 11,
+          "45": 11,
+          "46": 11,
+          "47": 11,
+          "48": 11,
+          "49": 11,
+          "50": 11,
+          "51": 11
+        }
+      }
+    },
+    {
+      "item": "message_template_overlap_row_level",
+      "status": "WARNING",
+      "check": "Share of test-row messages whose template text also occurs in training rows, and the coercion model fitted on the same 1,022 templates. Quantified by the template-disjoint re-run (exp2b_template_disjoint.py): disjoint template halves, coercion refitted on the training half.",
+      "evidence": {
+        "test_template_seen_in_train": {
+          "42": {
+            "standard": 0.9988404028074458,
+            "disjoint": 0.0
+          },
+          "43": {
+            "standard": 0.9995138255849286,
+            "disjoint": 0.0
+          },
+          "44": {
+            "standard": 0.9995126408772464,
+            "disjoint": 0.0
+          },
+          "45": {
+            "standard": 0.9993923189110355,
+            "disjoint": 0.0
+          },
+          "46": {
+            "standard": 0.9998786775856839,
+            "disjoint": 0.0
+          },
+          "47": {
+            "standard": 0.9995785924989464,
+            "disjoint": 0.0
+          },
+          "48": {
+            "standard": 0.9996353913466213,
+            "disjoint": 0.0
+          },
+          "49": {
+            "standard": 0.9998779818192911,
+            "disjoint": 0.0
+          },
+          "50": {
+            "standard": 0.9993944165203174,
+            "disjoint": 0.0
+          },
+          "51": {
+            "standard": 0.9998772629640994,
+            "disjoint": 0.0
+          }
+        },
+        "K_full_v2_pr_auc_standard_mean": 0.7196082225289658,
+        "K_full_v2_pr_auc_disjoint_mean": 0.7154569782285993,
+        "K_full_v2_paired_delta_pp": [
+          -0.41512443003666416,
+          0.7149551714811527
+        ],
+        "K_SE_recall_paired_delta_pp": [
+          -0.11304744650007525,
+          1.4897330653215193
+        ],
+        "E_core_message_pr_auc_paired_delta_pp": [
+          0.03333406693154184,
+          0.9149148755850304
+        ],
+        "reading": "Not label leakage (no test label is read), but test messages are seen templates. The template-disjoint numbers are the conservative estimate for the message channel."
+      }
+    },
+    {
+      "item": "payer_overlap_across_random_splits",
+      "status": "WARNING",
+      "check": "The row-level corpus is split at random, so one simulated payer's rows occur in train and test. No payer identifier is a feature and no label crosses splits, but generalisation to unseen payers is not measured by Experiments 1-2.",
+      "evidence": {
+        "mitigation": "Experiment 4 uses a chronological split of the replay stream."
+      }
+    },
+    {
+      "item": "no_future_transactions_in_store_at_assessment",
+      "status": "PASS",
+      "check": "Online, before every assessment: MAX(at) of the observation ledger < t.",
+      "evidence": {
+        "10_store_contains_only_earlier_payments": {
+          "checked": 180000,
+          "violations": 0
+        }
+      }
+    },
+    {
+      "item": "current_payment_not_in_its_own_state",
+      "status": "PASS",
+      "check": "check_payee is called before record_payment in the replay loop; pair count and distinct payers read at t equal an independent shadow built from earlier rows only.",
+      "evidence": {
+        "2_prior_pair_count_matches_earlier_rows": {
+          "checked": 180000,
+          "violations": 0
+        },
+        "3_distinct_payers_only_prior": {
+          "checked": 180000,
+          "violations": 0
+        },
+        "1_first_pair_is_new": {
+          "checked": 180000,
+          "violations": 0
+        },
+        "assess_before_insert_in_code": true
+      }
+    },
+    {
+      "item": "no_future_graph_edges_or_payee_history",
+      "status": "PASS",
+      "check": "Arrival window, connected component and positional finding read at t equal the shadow model of earlier payments; an unobserved payee's graph evidence is unavailable, not zero.",
+      "evidence": {
+        "4_arrival_window_only_prior": {
+          "checked": 142634,
+          "violations": 0
+        },
+        "5_component_is_pre_payment": {
+          "checked": 142634,
+          "violations": 0
+        },
+        "6_position_finding_only_when_gates_hold": {
+          "checked": 142634,
+          "violations": 0
+        },
+        "7_unobserved_payee_graph_unavailable_not_zero": {
+          "checked": 37366,
+          "violations": 0
+        }
+      }
+    },
+    {
+      "item": "no_post_payment_information_independent_rebuild",
+      "status": "PASS",
+      "check": "A separate process rebuilds a fresh store from earlier payments only and recomputes the full assessment for sampled payments; it must equal the recorded evidence.",
+      "evidence": {
+        "checked": 165,
+        "violations": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "pass": true
+      }
+    },
+    {
+      "item": "historical_records_not_rewritten",
+      "status": "PASS",
+      "check": "Observation rows written before the stream midpoint are identical in the final store.",
+      "evidence": {
+        "checked": 90000,
+        "violations": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "pass": true
+      }
+    },
+    {
+      "item": "boundary_is_material",
+      "status": "INFO",
+      "check": "Power probe: share of sampled payments whose assessment would differ if the future were visible.",
+      "evidence": null
+    },
+    {
+      "item": "replay_models_chronological_split",
+      "status": "PASS",
+      "check": "Replay models: first 60% of payments by time for training, next 15% validation, last 25% test.",
+      "evidence": {
+        "42": {
+          "train": 36000,
+          "validation": 9000,
+          "test": 15000,
+          "train_fraud": 342,
+          "validation_fraud": 206,
+          "test_fraud": 172,
+          "train_end": "2026-03-31T18:52:44.000000",
+          "validation_end": "2026-04-23T08:12:10.000000",
+          "test_start": "2026-04-23T08:12:48.000000"
+        },
+        "43": {
+          "train": 36000,
+          "validation": 9000,
+          "test": 15000,
+          "train_fraud": 409,
+          "validation_fraud": 69,
+          "test_fraud": 242,
+          "train_end": "2026-03-31T15:22:35.000000",
+          "validation_end": "2026-04-23T14:05:41.000000",
+          "test_start": "2026-04-23T14:10:06.000000"
+        },
+        "44": {
+          "train": 36000,
+          "validation": 9000,
+          "test": 15000,
+          "train_fraud": 412,
+          "validation_fraud": 90,
+          "test_fraud": 218,
+          "train_end": "2026-04-01T12:15:56.000000",
+          "validation_end": "2026-04-23T16:15:14.000000",
+          "test_start": "2026-04-23T16:19:20.000000"
+        }
+      }
+    },
+    {
+      "item": "replay_simulator_graph_variant_uses_scenario",
+      "status": "WARNING",
+      "check": "Variant B reproduces the row-level simulator's graph channel, which is sampled conditionally on the true scenario (dataset_v2._graph_row). It is included only to contrast simulator-generated with replayed graph features; it is not a deployable feature set.",
+      "evidence": {
+        "variant": "B_v2_simulator_graph_channel"
+      }
+    },
+    {
+      "item": "replay_graph_features_nonstationary",
+      "status": "WARNING",
+      "check": "Not leakage: replayed graph features grow with the age of the store, so their training-period and test-period distributions differ (medians for legitimate payees, chronological split).",
+      "evidence": {
+        "42": {
+          "arrival_span_days": {
+            "train": 30.419346064814814,
+            "test": 112.14684027777778
+          },
+          "lifespan_days": {
+            "train": 34.17649884259259,
+            "test": 116.24130208333332
+          },
+          "payments_per_day": {
+            "train": 1.52,
+            "test": 1.0
+          },
+          "component_size": {
+            "train": 8460.0,
+            "test": 13378.0
+          },
+          "shared_payer_peak": {
+            "train": 36.0,
+            "test": 81.0
+          },
+          "overlap_ratio": {
+            "train": 0.1428571428571428,
+            "test": null
+          },
+          "graph_available": {
+            "train": 1.0,
+            "test": 1.0
+          }
+        },
+        "43": {
+          "arrival_span_days": {
+            "train": 27.937060185185185,
+            "test": 105.61600694444444
+          },
+          "lifespan_days": {
+            "train": 32.20009259259259,
+            "test": 112.96940393518517
+          },
+          "payments_per_day": {
+            "train": 1.5,
+            "test": 1.0
+          },
+          "component_size": {
+            "train": 9147.0,
+            "test": 14414.0
+          },
+          "shared_payer_peak": {
+            "train": 26.0,
+            "test": 96.0
+          },
+          "overlap_ratio": {
+            "train": 0.1363636363636363,
+            "test": null
+          },
+          "graph_available": {
+            "train": 1.0,
+            "test": 1.0
+          }
+        },
+        "44": {
+          "arrival_span_days": {
+            "train": 27.174409722222222,
+            "test": 104.2938425925926
+          },
+          "lifespan_days": {
+            "train": 31.254975758101853,
+            "test": 113.15328015625
+          },
+          "payments_per_day": {
+            "train": 1.61,
+            "test": 1.0
+          },
+          "component_size": {
+            "train": 9010.5,
+            "test": 13653.0
+          },
+          "shared_payer_peak": {
+            "train": 24.0,
+            "test": 88.0
+          },
+          "overlap_ratio": {
+            "train": 0.125,
+            "test": null
+          },
+          "graph_available": {
+            "train": 1.0,
+            "test": 1.0
+          }
+        }
+      }
+    },
+    {
+      "item": "message_templates_in_replay_and_live_family",
+      "status": "WARNING",
+      "check": "The replay corpus draws its messages from the same 1,022-template pool, and the live message-pressure family uses coercion weights fitted on that pool. Message-family results in Experiments 3-4 are therefore in-sample for the coercion model.",
+      "evidence": {}
+    },
+    {
+      "item": "live_v1_model_on_replay_not_refitted",
+      "status": "PASS",
+      "check": "The live classifier family uses the stored V1 artefact (trained on the row-level corpus); it is applied to the replay stream without refitting, so no replay label reaches it.",
+      "evidence": {
+        "model": "models/risk_model.pkl"
+      }
+    }
+  ],
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "source": {
+    "python_source_sha256": "c659a21585cfa70332e341b6f6760adfc8ef0e20b9d458391dfab3c078d3eb2e",
+    "n_files": 86,
+    "git_head_of_snapshot": "9022a9feb65effa32779207e32458c0d37e9bb61"
+  }
+}

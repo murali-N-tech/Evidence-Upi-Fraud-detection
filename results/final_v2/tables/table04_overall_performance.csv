@@ -1,0 +1,18 @@
+Metric,"Validation (n=18,000)","Test (n=30,000)"
+ROC-AUC,0.9868,0.9900
+PR-AUC (average precision),0.6995,0.7326
+Accuracy,0.9871,0.9876
+Precision,0.4716,0.4843
+Recall (TPR),0.7418,0.7803
+F1,0.5766,0.5976
+Specificity (TNR),0.9900,0.9900
+FPR,0.0100,0.0100
+FNR,0.2582,0.2197
+NPV,0.9969,0.9973
+Balanced accuracy,0.8659,0.8852
+MCC,0.5856,0.6091
+Brier score,0.0059,0.0056
+Brier skill score,0.4936,0.5251
+Threshold,0.1123,0.1123
+Fraud prevalence,0.0118,0.0118
+Alert rate,0.0186,0.0191

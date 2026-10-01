@@ -640,6 +640,43 @@ export default function PayeeCheck() {
                 </ul>
               </div>
 
+              {/* The payer's own history with this payee */}
+              {result.history_state && (
+                <div
+                  className="rounded-2xl p-6"
+                  id="own-payee-history"
+                  style={{ background: "var(--surface)", border: "1px solid var(--line)" }}
+                >
+                  <h3 className="text-lg font-bold mb-1" style={{ color: "var(--ink)" }}>Your history with this payee</h3>
+                  <p className="text-xs mb-4" style={{ color: "var(--ink-subtle)" }}>
+                    From your imported statements and payments you confirmed here. Observed, not verified with your bank.
+                  </p>
+                  {result.payee_history?.paid_before ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {[
+                        { label: "Payments before", value: String(result.payee_history.payment_count) },
+                        { label: "First paid", value: result.payee_history.first_payment_at?.slice(0, 10) ?? "date unknown" },
+                        { label: "Last paid", value: result.payee_history.last_payment_at?.slice(0, 10) ?? "date unknown" },
+                        { label: "Total paid", value: `Rs ${result.payee_history.total_amount.toLocaleString("en-IN")}` },
+                      ].map(({ label, value }) => (
+                        <div key={label} className="rounded-xl p-3.5" style={{ background: "var(--inset)", border: "1px solid var(--line)" }}>
+                          <div className="text-lg font-extrabold leading-tight" style={{ color: "var(--ink)" }}>{value}</div>
+                          <div className="text-[10px] mt-0.5 font-medium" style={{ color: "var(--ink-subtle)" }}>{label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      className="flex items-start gap-3 text-sm rounded-xl p-4"
+                      style={{ background: "var(--inset)", border: "1px solid var(--line)", color: "var(--ink-muted)" }}
+                    >
+                      <Info className="h-5 w-5 shrink-0 mt-0.5" style={{ color: "var(--ink-subtle)" }} />
+                      <span>{result.history_state.message}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Reputation */}
               <div
                 className="rounded-2xl p-6"

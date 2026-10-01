@@ -1,0 +1,1048 @@
+{
+  "what": "Experiment 3: the running ten-family assessment (payee_check.check_payee) evaluated on the chronological replay stream. Seed: 43. Continuous risk is evaluated separately from the advisory verdict mix. Labels are synthetic.",
+  "rows": 60000,
+  "fraud": 720,
+  "families": [
+    "address_and_qr",
+    "amount_context",
+    "graph",
+    "link_safety",
+    "message_pressure",
+    "ml_classifier",
+    "payee_history",
+    "payer_behaviour",
+    "relationship",
+    "stated_intent"
+  ],
+  "consistency_audit": {
+    "rows": 60000,
+    "mismatches": {},
+    "hard_block_rows": 0,
+    "rule": "evidence.combine_scores + agreement_bonus (distinct facts, >=2 families, score>=20) -> min(99, .); verdict_from_score bands 22/45/70; HARD_BLOCK findings"
+  },
+  "risk_and_verdicts": [
+    {
+      "slice": "full_stream",
+      "n": 60000,
+      "n_fraud": 720,
+      "prevalence": 0.012,
+      "risk_pr_auc": 0.04169206110747449,
+      "risk_roc_auc": 0.7625406381204078,
+      "ml_available_rate": 0.8356333333333333,
+      "ml_only_pr_auc_where_available": 0.03899336311117609,
+      "ml_only_roc_auc_where_available": 0.7552440992163832,
+      "risk_pr_auc_same_rows": 0.051204852016591085,
+      "risk_roc_auc_same_rows": 0.787018102091454,
+      "warn_plus": {
+        "tp": 602,
+        "fp": 33053,
+        "fn": 118,
+        "tn": 26227,
+        "recall": 0.8361111111111111,
+        "precision": 0.017887386718169664,
+        "f1": 0.03502545454545455,
+        "fpr": 0.5575742240215924,
+        "flag_rate": 0.5609166666666666
+      },
+      "step_up_plus": {
+        "tp": 483,
+        "fp": 14359,
+        "fn": 237,
+        "tn": 44921,
+        "recall": 0.6708333333333333,
+        "precision": 0.03254278399137583,
+        "f1": 0.06207428351111684,
+        "fpr": 0.24222334682861,
+        "flag_rate": 0.24736666666666668
+      },
+      "block": {
+        "tp": 354,
+        "fp": 7961,
+        "fn": 366,
+        "tn": 51319,
+        "recall": 0.49166666666666664,
+        "precision": 0.04257366205652435,
+        "f1": 0.07836192584394024,
+        "fpr": 0.1342948717948718,
+        "flag_rate": 0.13858333333333334
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.1638888888888889,
+        "WARN": 0.16527777777777777,
+        "STEP_UP": 0.17916666666666667,
+        "BLOCK": 0.49166666666666664
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.44242577597840754,
+        "WARN": 0.31535087719298244,
+        "STEP_UP": 0.10792847503373819,
+        "BLOCK": 0.1342948717948718
+      },
+      "intervention_rate_all": 0.5609166666666666
+    },
+    {
+      "slice": "test_last25pct",
+      "n": 15000,
+      "n_fraud": 242,
+      "prevalence": 0.016133333333333333,
+      "risk_pr_auc": 0.098819641449963,
+      "risk_roc_auc": 0.836078400956926,
+      "ml_available_rate": 0.9878,
+      "ml_only_pr_auc_where_available": 0.08894412350558197,
+      "ml_only_roc_auc_where_available": 0.8393743197435709,
+      "risk_pr_auc_same_rows": 0.0958871101600679,
+      "risk_roc_auc_same_rows": 0.8372153100652208,
+      "warn_plus": {
+        "tp": 198,
+        "fp": 5230,
+        "fn": 44,
+        "tn": 9528,
+        "recall": 0.8181818181818182,
+        "precision": 0.036477523949889464,
+        "f1": 0.06984126984126984,
+        "fpr": 0.3543840628811492,
+        "flag_rate": 0.36186666666666667
+      },
+      "step_up_plus": {
+        "tp": 154,
+        "fp": 1997,
+        "fn": 88,
+        "tn": 12761,
+        "recall": 0.6363636363636364,
+        "precision": 0.07159460715946071,
+        "f1": 0.12870873380693687,
+        "fpr": 0.13531643854180783,
+        "flag_rate": 0.1434
+      },
+      "block": {
+        "tp": 109,
+        "fp": 1063,
+        "fn": 133,
+        "tn": 13695,
+        "recall": 0.45041322314049587,
+        "precision": 0.09300341296928327,
+        "f1": 0.15417256011315414,
+        "fpr": 0.07202873018024122,
+        "flag_rate": 0.07813333333333333
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.18181818181818182,
+        "WARN": 0.18181818181818182,
+        "STEP_UP": 0.1859504132231405,
+        "BLOCK": 0.45041322314049587
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.6456159371188508,
+        "WARN": 0.21906762433934138,
+        "STEP_UP": 0.06328770836156661,
+        "BLOCK": 0.07202873018024122
+      },
+      "intervention_rate_all": 0.36186666666666667
+    },
+    {
+      "slice": "scenario=social_engineering_vs_all_legit",
+      "n": 59640,
+      "n_fraud": 360,
+      "prevalence": 0.006036217303822937,
+      "risk_pr_auc": 0.03412882106672792,
+      "risk_roc_auc": 0.8576980244414455,
+      "ml_available_rate": 0.8356136820925554,
+      "ml_only_pr_auc_where_available": 0.01467645722468385,
+      "ml_only_roc_auc_where_available": 0.7786223743068582,
+      "risk_pr_auc_same_rows": 0.04188519365045948,
+      "risk_roc_auc_same_rows": 0.8853973441772027,
+      "warn_plus": {
+        "tp": 343,
+        "fp": 33053,
+        "fn": 17,
+        "tn": 26227,
+        "recall": 0.9527777777777777,
+        "precision": 0.010270691100730627,
+        "f1": 0.02032231307026899,
+        "fpr": 0.5575742240215924,
+        "flag_rate": 0.5599597585513079
+      },
+      "step_up_plus": {
+        "tp": 298,
+        "fp": 14359,
+        "fn": 62,
+        "tn": 44921,
+        "recall": 0.8277777777777777,
+        "precision": 0.02033158217916354,
+        "f1": 0.039688353199707,
+        "fpr": 0.24222334682861,
+        "flag_rate": 0.24575788061703555
+      },
+      "block": {
+        "tp": 231,
+        "fp": 7961,
+        "fn": 129,
+        "tn": 51319,
+        "recall": 0.6416666666666667,
+        "precision": 0.0281982421875,
+        "f1": 0.05402245088868102,
+        "fpr": 0.1342948717948718,
+        "flag_rate": 0.13735747820254862
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.04722222222222222,
+        "WARN": 0.125,
+        "STEP_UP": 0.18611111111111112,
+        "BLOCK": 0.6416666666666667
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.44242577597840754,
+        "WARN": 0.31535087719298244,
+        "STEP_UP": 0.10792847503373819,
+        "BLOCK": 0.1342948717948718
+      },
+      "intervention_rate_all": 0.5599597585513079
+    },
+    {
+      "slice": "scenario=mule_collection_vs_all_legit",
+      "n": 59438,
+      "n_fraud": 158,
+      "prevalence": 0.0026582321074060367,
+      "risk_pr_auc": 0.013218024488131199,
+      "risk_roc_auc": 0.8509463242453749,
+      "ml_available_rate": 0.8359467007638212,
+      "ml_only_pr_auc_where_available": 0.054687434905792684,
+      "ml_only_roc_auc_where_available": 0.878204646908125,
+      "risk_pr_auc_same_rows": 0.018421572137552505,
+      "risk_roc_auc_same_rows": 0.8831074450076662,
+      "warn_plus": {
+        "tp": 153,
+        "fp": 33053,
+        "fn": 5,
+        "tn": 26227,
+        "recall": 0.9683544303797469,
+        "precision": 0.004607601035957357,
+        "f1": 0.009171562162810214,
+        "fpr": 0.5575742240215924,
+        "flag_rate": 0.5586661731552206
+      },
+      "step_up_plus": {
+        "tp": 126,
+        "fp": 14359,
+        "fn": 32,
+        "tn": 44921,
+        "recall": 0.7974683544303798,
+        "precision": 0.008698653779772178,
+        "f1": 0.01720958819913952,
+        "fpr": 0.24222334682861,
+        "flag_rate": 0.24369931693529392
+      },
+      "block": {
+        "tp": 92,
+        "fp": 7961,
+        "fn": 66,
+        "tn": 51319,
+        "recall": 0.5822784810126582,
+        "precision": 0.011424313920278158,
+        "f1": 0.02240896358543417,
+        "fpr": 0.1342948717948718,
+        "flag_rate": 0.13548571620848615
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.03164556962025317,
+        "WARN": 0.17088607594936708,
+        "STEP_UP": 0.21518987341772153,
+        "BLOCK": 0.5822784810126582
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.44242577597840754,
+        "WARN": 0.31535087719298244,
+        "STEP_UP": 0.10792847503373819,
+        "BLOCK": 0.1342948717948718
+      },
+      "intervention_rate_all": 0.5586661731552206
+    },
+    {
+      "slice": "scenario=account_takeover_vs_all_legit",
+      "n": 59424,
+      "n_fraud": 144,
+      "prevalence": 0.0024232633279483036,
+      "risk_pr_auc": 0.003245498073317352,
+      "risk_roc_auc": 0.614725080596791,
+      "ml_available_rate": 0.83604267635972,
+      "ml_only_pr_auc_where_available": 0.0033083289913572226,
+      "ml_only_roc_auc_where_available": 0.6573999521624821,
+      "risk_pr_auc_same_rows": 0.0039027399204163375,
+      "risk_roc_auc_same_rows": 0.6498498761572626,
+      "warn_plus": {
+        "tp": 94,
+        "fp": 33053,
+        "fn": 50,
+        "tn": 26227,
+        "recall": 0.6527777777777778,
+        "precision": 0.002835852414999849,
+        "f1": 0.00564717190832357,
+        "fpr": 0.5575742240215924,
+        "flag_rate": 0.5578049273021002
+      },
+      "step_up_plus": {
+        "tp": 55,
+        "fp": 14359,
+        "fn": 89,
+        "tn": 44921,
+        "recall": 0.3819444444444444,
+        "precision": 0.0038157347023726933,
+        "f1": 0.007555982964692953,
+        "fpr": 0.24222334682861,
+        "flag_rate": 0.24256192784060313
+      },
+      "block": {
+        "tp": 28,
+        "fp": 7961,
+        "fn": 116,
+        "tn": 51319,
+        "recall": 0.19444444444444445,
+        "precision": 0.0035048191262986605,
+        "f1": 0.006885528095413746,
+        "fpr": 0.1342948717948718,
+        "flag_rate": 0.13444063004846526
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.3472222222222222,
+        "WARN": 0.2708333333333333,
+        "STEP_UP": 0.1875,
+        "BLOCK": 0.19444444444444445
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.44242577597840754,
+        "WARN": 0.31535087719298244,
+        "STEP_UP": 0.10792847503373819,
+        "BLOCK": 0.1342948717948718
+      },
+      "intervention_rate_all": 0.5578049273021002
+    },
+    {
+      "slice": "scenario=card_testing_vs_all_legit",
+      "n": 59338,
+      "n_fraud": 58,
+      "prevalence": 0.0009774512117024503,
+      "risk_pr_auc": 0.0007463254817031372,
+      "risk_roc_auc": 0.2980696519149332,
+      "ml_available_rate": 0.8360241329333647,
+      "ml_only_pr_auc_where_available": 0.001553056906095537,
+      "ml_only_roc_auc_where_available": 0.5487192784212437,
+      "risk_pr_auc_same_rows": 0.0007943500738441755,
+      "risk_roc_auc_same_rows": 0.3295528471689737,
+      "warn_plus": {
+        "tp": 12,
+        "fp": 33053,
+        "fn": 46,
+        "tn": 26227,
+        "recall": 0.20689655172413793,
+        "precision": 0.0003629215182216846,
+        "f1": 0.0007245720496331855,
+        "fpr": 0.5575742240215924,
+        "flag_rate": 0.5572314537058883
+      },
+      "step_up_plus": {
+        "tp": 4,
+        "fp": 14359,
+        "fn": 54,
+        "tn": 44921,
+        "recall": 0.06896551724137931,
+        "precision": 0.00027849335097124555,
+        "f1": 0.0005547465501698911,
+        "fpr": 0.24222334682861,
+        "flag_rate": 0.24205399575314301
+      },
+      "block": {
+        "tp": 3,
+        "fp": 7961,
+        "fn": 55,
+        "tn": 51319,
+        "recall": 0.05172413793103448,
+        "precision": 0.00037669512807634355,
+        "f1": 0.0007479431563201197,
+        "fpr": 0.1342948717948718,
+        "flag_rate": 0.13421416293100544
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.7931034482758621,
+        "WARN": 0.13793103448275862,
+        "STEP_UP": 0.017241379310344827,
+        "BLOCK": 0.05172413793103448
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.44242577597840754,
+        "WARN": 0.31535087719298244,
+        "STEP_UP": 0.10792847503373819,
+        "BLOCK": 0.1342948717948718
+      },
+      "intervention_rate_all": 0.5572314537058883
+    },
+    {
+      "slice": "days_0-30",
+      "n": 12009,
+      "n_fraud": 111,
+      "prevalence": 0.00924306769922558,
+      "risk_pr_auc": 0.012657117637319786,
+      "risk_roc_auc": 0.5482880762759734,
+      "ml_available_rate": 0.3906236988924973,
+      "ml_only_pr_auc_where_available": 0.01337567111184682,
+      "ml_only_roc_auc_where_available": 0.5711367502935327,
+      "risk_pr_auc_same_rows": 0.01451503777290072,
+      "risk_roc_auc_same_rows": 0.5326360434188772,
+      "warn_plus": {
+        "tp": 86,
+        "fp": 9901,
+        "fn": 25,
+        "tn": 1997,
+        "recall": 0.7747747747747747,
+        "precision": 0.008611194552918795,
+        "f1": 0.017033075856605268,
+        "fpr": 0.8321566649857118,
+        "flag_rate": 0.8316262802897827
+      },
+      "step_up_plus": {
+        "tp": 64,
+        "fp": 5562,
+        "fn": 47,
+        "tn": 6336,
+        "recall": 0.5765765765765766,
+        "precision": 0.011375755421258443,
+        "f1": 0.022311312532682585,
+        "fpr": 0.46747352496217853,
+        "flag_rate": 0.4684819718544425
+      },
+      "block": {
+        "tp": 46,
+        "fp": 3665,
+        "fn": 65,
+        "tn": 8233,
+        "recall": 0.4144144144144144,
+        "precision": 0.012395580706009162,
+        "f1": 0.024071166928309785,
+        "fpr": 0.30803496385947216,
+        "flag_rate": 0.30901823632275793
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.22522522522522523,
+        "WARN": 0.1981981981981982,
+        "STEP_UP": 0.16216216216216217,
+        "BLOCK": 0.4144144144144144
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.1678433350142881,
+        "WARN": 0.36468314002353336,
+        "STEP_UP": 0.15943856110270635,
+        "BLOCK": 0.30803496385947216
+      },
+      "intervention_rate_all": 0.8316262802897827
+    },
+    {
+      "slice": "days_30-60",
+      "n": 12133,
+      "n_fraud": 134,
+      "prevalence": 0.011044259457677409,
+      "risk_pr_auc": 0.040826970139826606,
+      "risk_roc_auc": 0.7657342091940498,
+      "ml_available_rate": 0.8679634055880656,
+      "ml_only_pr_auc_where_available": 0.03537019953610779,
+      "ml_only_roc_auc_where_available": 0.6959151690990609,
+      "risk_pr_auc_same_rows": 0.0319512485509127,
+      "risk_roc_auc_same_rows": 0.7610432157419879,
+      "warn_plus": {
+        "tp": 115,
+        "fp": 7880,
+        "fn": 19,
+        "tn": 4119,
+        "recall": 0.8582089552238806,
+        "precision": 0.014383989993746092,
+        "f1": 0.028293763070488375,
+        "fpr": 0.6567213934494541,
+        "flag_rate": 0.6589466743591857
+      },
+      "step_up_plus": {
+        "tp": 98,
+        "fp": 3227,
+        "fn": 36,
+        "tn": 8772,
+        "recall": 0.7313432835820896,
+        "precision": 0.029473684210526315,
+        "f1": 0.05666377565770454,
+        "fpr": 0.26893907825652136,
+        "flag_rate": 0.2740459902744581
+      },
+      "block": {
+        "tp": 77,
+        "fp": 1523,
+        "fn": 57,
+        "tn": 10476,
+        "recall": 0.5746268656716418,
+        "precision": 0.048125,
+        "f1": 0.08881199538638986,
+        "fpr": 0.12692724393699475,
+        "flag_rate": 0.1318717547185362
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.1417910447761194,
+        "WARN": 0.12686567164179105,
+        "STEP_UP": 0.15671641791044777,
+        "BLOCK": 0.5746268656716418
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.3432786065505459,
+        "WARN": 0.38778231519293277,
+        "STEP_UP": 0.14201183431952663,
+        "BLOCK": 0.12692724393699475
+      },
+      "intervention_rate_all": 0.6589466743591857
+    },
+    {
+      "slice": "days_60-90",
+      "n": 12035,
+      "n_fraud": 164,
+      "prevalence": 0.013626921479019526,
+      "risk_pr_auc": 0.12423634510107005,
+      "risk_roc_auc": 0.8747757909724663,
+      "ml_available_rate": 0.9537183215621106,
+      "ml_only_pr_auc_where_available": 0.12824169538174562,
+      "ml_only_roc_auc_where_available": 0.7843655381064573,
+      "risk_pr_auc_same_rows": 0.12538256677034249,
+      "risk_roc_auc_same_rows": 0.8824626589361151,
+      "warn_plus": {
+        "tp": 154,
+        "fp": 6339,
+        "fn": 10,
+        "tn": 5532,
+        "recall": 0.9390243902439024,
+        "precision": 0.023717849992299398,
+        "f1": 0.046267087276550996,
+        "fpr": 0.5339903967652262,
+        "flag_rate": 0.5395097631906938
+      },
+      "step_up_plus": {
+        "tp": 129,
+        "fp": 2191,
+        "fn": 35,
+        "tn": 9680,
+        "recall": 0.7865853658536586,
+        "precision": 0.05560344827586207,
+        "f1": 0.10386473429951691,
+        "fpr": 0.18456743324067054,
+        "flag_rate": 0.1927710843373494
+      },
+      "block": {
+        "tp": 95,
+        "fp": 990,
+        "fn": 69,
+        "tn": 10881,
+        "recall": 0.5792682926829268,
+        "precision": 0.08755760368663594,
+        "f1": 0.1521216973578863,
+        "fpr": 0.08339651250947688,
+        "flag_rate": 0.0901537183215621
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.06097560975609756,
+        "WARN": 0.1524390243902439,
+        "STEP_UP": 0.2073170731707317,
+        "BLOCK": 0.5792682926829268
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.4660096032347738,
+        "WARN": 0.34942296352455565,
+        "STEP_UP": 0.10117092073119366,
+        "BLOCK": 0.08339651250947688
+      },
+      "intervention_rate_all": 0.5395097631906938
+    },
+    {
+      "slice": "days_90-120",
+      "n": 11888,
+      "n_fraud": 123,
+      "prevalence": 0.01034656796769852,
+      "risk_pr_auc": 0.0328077663855021,
+      "risk_roc_auc": 0.7289293377421662,
+      "ml_available_rate": 0.9784656796769852,
+      "ml_only_pr_auc_where_available": 0.018377402726395216,
+      "ml_only_roc_auc_where_available": 0.7394227521887097,
+      "risk_pr_auc_same_rows": 0.032649222891844645,
+      "risk_roc_auc_same_rows": 0.7265528797443691,
+      "warn_plus": {
+        "tp": 85,
+        "fp": 4858,
+        "fn": 38,
+        "tn": 6907,
+        "recall": 0.6910569105691057,
+        "precision": 0.017196034796682177,
+        "f1": 0.03355704697986577,
+        "fpr": 0.4129196770080748,
+        "flag_rate": 0.4157974427994616
+      },
+      "step_up_plus": {
+        "tp": 62,
+        "fp": 1867,
+        "fn": 61,
+        "tn": 9898,
+        "recall": 0.5040650406504065,
+        "precision": 0.0321410057024365,
+        "f1": 0.060428849902534124,
+        "fpr": 0.1586910327241819,
+        "flag_rate": 0.16226446837146702
+      },
+      "block": {
+        "tp": 42,
+        "fp": 1020,
+        "fn": 81,
+        "tn": 10745,
+        "recall": 0.34146341463414637,
+        "precision": 0.03954802259887006,
+        "f1": 0.07088607594936709,
+        "fpr": 0.08669783255418614,
+        "flag_rate": 0.08933378196500673
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.3089430894308943,
+        "WARN": 0.18699186991869918,
+        "STEP_UP": 0.16260162601626016,
+        "BLOCK": 0.34146341463414637
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.5870803229919253,
+        "WARN": 0.2542286442838929,
+        "STEP_UP": 0.07199320016999575,
+        "BLOCK": 0.08669783255418614
+      },
+      "intervention_rate_all": 0.4157974427994616
+    },
+    {
+      "slice": "days_120-150",
+      "n": 11935,
+      "n_fraud": 188,
+      "prevalence": 0.015751989945538333,
+      "risk_pr_auc": 0.13683959077514013,
+      "risk_roc_auc": 0.8650209922316066,
+      "ml_available_rate": 0.9891914537075828,
+      "ml_only_pr_auc_where_available": 0.11021716683357245,
+      "ml_only_roc_auc_where_available": 0.8594979529551343,
+      "risk_pr_auc_same_rows": 0.13383385681490778,
+      "risk_roc_auc_same_rows": 0.8687457277321018,
+      "warn_plus": {
+        "tp": 162,
+        "fp": 4075,
+        "fn": 26,
+        "tn": 7672,
+        "recall": 0.8617021276595744,
+        "precision": 0.03823459995279679,
+        "f1": 0.07322033898305084,
+        "fpr": 0.34689708010555886,
+        "flag_rate": 0.3550062840385421
+      },
+      "step_up_plus": {
+        "tp": 130,
+        "fp": 1512,
+        "fn": 58,
+        "tn": 10235,
+        "recall": 0.6914893617021277,
+        "precision": 0.07917174177831912,
+        "f1": 0.14207650273224046,
+        "fpr": 0.12871371413978036,
+        "flag_rate": 0.13757855048177628
+      },
+      "block": {
+        "tp": 94,
+        "fp": 763,
+        "fn": 94,
+        "tn": 10984,
+        "recall": 0.5,
+        "precision": 0.10968494749124855,
+        "f1": 0.1799043062200957,
+        "fpr": 0.06495275389461139,
+        "flag_rate": 0.07180561374109762
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.13829787234042554,
+        "WARN": 0.1702127659574468,
+        "STEP_UP": 0.19148936170212766,
+        "BLOCK": 0.5
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.6531029198944411,
+        "WARN": 0.2181833659657785,
+        "STEP_UP": 0.06376096024516897,
+        "BLOCK": 0.06495275389461139
+      },
+      "intervention_rate_all": 0.3550062840385421
+    },
+    {
+      "slice": "evidence_level=FULL",
+      "n": 58001,
+      "n_fraud": 703,
+      "prevalence": 0.012120480681367563,
+      "risk_pr_auc": 0.042498248547417475,
+      "risk_roc_auc": 0.7648767167552613,
+      "ml_available_rate": 0.8644333718384166,
+      "ml_only_pr_auc_where_available": 0.03899336311117609,
+      "ml_only_roc_auc_where_available": 0.7552440992163832,
+      "risk_pr_auc_same_rows": 0.051204852016591085,
+      "risk_roc_auc_same_rows": 0.787018102091454,
+      "warn_plus": {
+        "tp": 590,
+        "fp": 32155,
+        "fn": 113,
+        "tn": 25143,
+        "recall": 0.8392603129445235,
+        "precision": 0.018018018018018018,
+        "f1": 0.035278641473331734,
+        "fpr": 0.5611888722119446,
+        "flag_rate": 0.5645592317373839
+      },
+      "step_up_plus": {
+        "tp": 473,
+        "fp": 13799,
+        "fn": 230,
+        "tn": 43499,
+        "recall": 0.6728307254623044,
+        "precision": 0.03314181614349776,
+        "f1": 0.06317195325542571,
+        "fpr": 0.24082865021466718,
+        "flag_rate": 0.24606472302201687
+      },
+      "block": {
+        "tp": 345,
+        "fp": 7494,
+        "fn": 358,
+        "tn": 49804,
+        "recall": 0.4907539118065434,
+        "precision": 0.0440107156525067,
+        "f1": 0.08077733551861392,
+        "fpr": 0.13078990540682048,
+        "flag_rate": 0.135152842192376
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.16073968705547653,
+        "WARN": 0.16642958748221906,
+        "STEP_UP": 0.18207681365576103,
+        "BLOCK": 0.4907539118065434
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.4388111277880554,
+        "WARN": 0.3203602219972774,
+        "STEP_UP": 0.1100387448078467,
+        "BLOCK": 0.13078990540682048
+      },
+      "intervention_rate_all": 0.5645592317373839
+    },
+    {
+      "slice": "evidence_level=PARTIAL",
+      "n": 1999,
+      "n_fraud": 17,
+      "prevalence": 0.008504252126063032,
+      "risk_pr_auc": 0.024170679484767595,
+      "risk_roc_auc": 0.6784145545200925,
+      "ml_available_rate": 0.0,
+      "warn_plus": {
+        "tp": 12,
+        "fp": 898,
+        "fn": 5,
+        "tn": 1084,
+        "recall": 0.7058823529411765,
+        "precision": 0.013186813186813187,
+        "f1": 0.025889967637540454,
+        "fpr": 0.4530776992936428,
+        "flag_rate": 0.45522761380690346
+      },
+      "step_up_plus": {
+        "tp": 10,
+        "fp": 560,
+        "fn": 7,
+        "tn": 1422,
+        "recall": 0.5882352941176471,
+        "precision": 0.017543859649122806,
+        "f1": 0.03407155025553663,
+        "fpr": 0.28254288597376387,
+        "flag_rate": 0.2851425712856428
+      },
+      "block": {
+        "tp": 9,
+        "fp": 467,
+        "fn": 8,
+        "tn": 1515,
+        "recall": 0.5294117647058824,
+        "precision": 0.018907563025210083,
+        "f1": 0.03651115618661257,
+        "fpr": 0.23562058526740667,
+        "flag_rate": 0.2381190595297649
+      },
+      "verdict_share_fraud": {
+        "APPROVE": 0.29411764705882354,
+        "WARN": 0.11764705882352941,
+        "STEP_UP": 0.058823529411764705,
+        "BLOCK": 0.5294117647058824
+      },
+      "verdict_share_legit": {
+        "APPROVE": 0.5469223007063572,
+        "WARN": 0.1705348133198789,
+        "STEP_UP": 0.046922300706357216,
+        "BLOCK": 0.23562058526740667
+      },
+      "intervention_rate_all": 0.45522761380690346
+    }
+  ],
+  "verdict_share_by_group": {
+    "account_takeover": {
+      "APPROVE": 0.347222,
+      "WARN": 0.270833,
+      "STEP_UP": 0.1875,
+      "BLOCK": 0.194444
+    },
+    "card_testing": {
+      "APPROVE": 0.793103,
+      "WARN": 0.137931,
+      "STEP_UP": 0.017241,
+      "BLOCK": 0.051724
+    },
+    "legitimate": {
+      "APPROVE": 0.442426,
+      "WARN": 0.315351,
+      "STEP_UP": 0.107928,
+      "BLOCK": 0.134295
+    },
+    "mule_collection": {
+      "APPROVE": 0.031646,
+      "WARN": 0.170886,
+      "STEP_UP": 0.21519,
+      "BLOCK": 0.582278
+    },
+    "social_engineering": {
+      "APPROVE": 0.047222,
+      "WARN": 0.125,
+      "STEP_UP": 0.186111,
+      "BLOCK": 0.641667
+    }
+  },
+  "rows_by_group": {
+    "account_takeover": 144,
+    "card_testing": 58,
+    "legitimate": 59280,
+    "mule_collection": 158,
+    "social_engineering": 360
+  },
+  "verdict_share_by_group_test_last25pct": {
+    "account_takeover": {
+      "APPROVE": 0.36,
+      "WARN": 0.28,
+      "STEP_UP": 0.18,
+      "BLOCK": 0.18
+    },
+    "card_testing": {
+      "APPROVE": 0.789474,
+      "WARN": 0.105263,
+      "STEP_UP": 0.052632,
+      "BLOCK": 0.052632
+    },
+    "legitimate": {
+      "APPROVE": 0.645616,
+      "WARN": 0.219068,
+      "STEP_UP": 0.063288,
+      "BLOCK": 0.072029
+    },
+    "mule_collection": {
+      "APPROVE": 0.061224,
+      "WARN": 0.163265,
+      "STEP_UP": 0.204082,
+      "BLOCK": 0.571429
+    },
+    "social_engineering": {
+      "APPROVE": 0.064516,
+      "WARN": 0.16129,
+      "STEP_UP": 0.201613,
+      "BLOCK": 0.572581
+    }
+  },
+  "rows_by_group_test_last25pct": {
+    "account_takeover": 50,
+    "card_testing": 19,
+    "legitimate": 14758,
+    "mule_collection": 49,
+    "social_engineering": 124
+  },
+  "corroboration": {
+    "bonus_rate_fraud": 0.6430555555555556,
+    "bonus_rate_legit": 0.18549257759784077,
+    "bonus_distribution_fraud": {
+      "0": 257,
+      "6": 226,
+      "22": 68,
+      "28": 23,
+      "14": 138,
+      "32": 8
+    },
+    "bonus_distribution_legit": {
+      "0": 48284,
+      "6": 9399,
+      "14": 1496,
+      "22": 94,
+      "28": 7
+    },
+    "rows_with_fact_observed_by_2plus_voting_families": 177,
+    "rows_where_family_count_rule_exceeds_fact_rule": 1,
+    "rows_where_family_count_rule_exceeds_fact_rule_fraud": 0,
+    "mean_bonus_removed_by_fact_dedup_when_positive": 8.0,
+    "ml_classifier_rows_with_facts": 18795,
+    "unavailable_rows_with_nonzero_score": 0
+  },
+  "risk_vs_coverage": {
+    "spearman_risk_coverage_all": -0.15383622978216413,
+    "spearman_risk_coverage_legit": -0.15803854663707018,
+    "coverage_median_fraud": 96.0,
+    "coverage_median_legit": 97.0,
+    "evidence_level_share_fraud": {
+      "FULL": 0.9763888888888889,
+      "PARTIAL": 0.02361111111111111
+    },
+    "evidence_level_share_legit": {
+      "FULL": 0.9665654520917679,
+      "PARTIAL": 0.033434547908232116
+    },
+    "risk_by_coverage_bin": [
+      {
+        "cov_bin": "(40.0, 60.0]",
+        "legit_median_risk": 6.0,
+        "fraud_median_risk": 6.0
+      },
+      {
+        "cov_bin": "(60.0, 80.0]",
+        "legit_median_risk": 27.0,
+        "fraud_median_risk": 36.5
+      },
+      {
+        "cov_bin": "(80.0, 100.0]",
+        "legit_median_risk": 23.0,
+        "fraud_median_risk": 69.0
+      }
+    ],
+    "payee_status_share_fraud": {
+      "NEW_TO_USER_BUT_OBSERVED": 0.6819444444444445,
+      "UNKNOWN": 0.14305555555555555,
+      "PAID_ONCE": 0.08333333333333333,
+      "PAID_BEFORE": 0.07916666666666666,
+      "PAID_OFTEN": 0.0125
+    },
+    "payee_status_share_legit": {
+      "NEW_TO_USER_BUT_OBSERVED": 0.2907388663967611,
+      "PAID_BEFORE": 0.22840755735492577,
+      "UNKNOWN": 0.2184041835357625,
+      "PAID_ONCE": 0.19775641025641025,
+      "PAID_OFTEN": 0.06469298245614036
+    }
+  },
+  "one_percent_budget_on_last25pct": {
+    "risk": {
+      "threshold": null,
+      "note": "no threshold meets FPR<=1% on the selection window"
+    },
+    "ml_probability": {
+      "tp": 15,
+      "fp": 97,
+      "fn": 214,
+      "tn": 14491,
+      "recall": 0.06550218340611354,
+      "precision": 0.13392857142857142,
+      "f1": 0.0879765395894428,
+      "fpr": 0.006649300795174116,
+      "flag_rate": 0.007558885064452993,
+      "threshold": 0.0538,
+      "rows": 14817,
+      "chosen_on": "60-75% window of the stream",
+      "selection_window_fpr": 0.009972489683631361
+    },
+    "live_v1_at_stored_threshold_last25": {
+      "tp": 12,
+      "fp": 6,
+      "fn": 217,
+      "tn": 14582,
+      "recall": 0.05240174672489083,
+      "precision": 0.6666666666666666,
+      "f1": 0.09716599190283401,
+      "fpr": 0.0004112969564025226,
+      "flag_rate": 0.0012148208139299453,
+      "threshold": 0.1174,
+      "rows": 14817,
+      "pr_auc": 0.08894412350558197,
+      "roc_auc": 0.8393743197435709,
+      "recall_social_engineering": 0.017391304347826087,
+      "recall_mule_collection": 0.20408163265306123,
+      "recall_account_takeover": 0.0,
+      "recall_card_testing": 0.0
+    },
+    "scenario_recall_warn_plus_last25": {
+      "recall_social_engineering": 0.9354838709677419,
+      "recall_mule_collection": 0.9387755102040817,
+      "recall_account_takeover": 0.64,
+      "recall_card_testing": 0.21052631578947367
+    },
+    "scenario_recall_step_up_plus_last25": {
+      "recall_social_engineering": 0.7741935483870968,
+      "recall_mule_collection": 0.7755102040816326,
+      "recall_account_takeover": 0.36,
+      "recall_card_testing": 0.10526315789473684
+    },
+    "scenario_recall_block_last25": {
+      "recall_social_engineering": 0.5725806451612904,
+      "recall_mule_collection": 0.5714285714285714,
+      "recall_account_takeover": 0.18,
+      "recall_card_testing": 0.05263157894736842
+    },
+    "risk_saturation": {
+      "legit_share_R99_selection_window": 0.036949949613705076,
+      "legit_share_R99_last25": 0.02398699010706058,
+      "legit_share_R_ge_70_last25": 0.07202873018024122,
+      "leading_family_counts_legit_BLOCK_last25": {
+        "stated_intent": 491,
+        "message_pressure": 262,
+        "payee_history": 221,
+        "link_safety": 61,
+        "payer_behaviour": 28,
+        "amount_context": 12
+      },
+      "finding_codes_legit_BLOCK_last25_top": {
+        "streams_agree": 579,
+        "payer_behaviour": 492,
+        "paying_for_a_refund": 491,
+        "ml_behavioural_risk": 437,
+        "graph_payee_shape": 431,
+        "payee_established": 418,
+        "message_pay_request": 299,
+        "message_authority": 272,
+        "mule_pattern": 224,
+        "message_urgency": 217,
+        "intent_payee_mismatch": 155,
+        "message_fear": 133
+      },
+      "n_legit_BLOCK_last25": 1063
+    }
+  },
+  "notes": [
+    "ml_probability is the RUNNING V1 model (models/risk_model.pkl), trained on the row-level simulator, applied here to a different (replay) corpus without refitting.",
+    "Verdict thresholds are the application's fixed bands, not tuned on this stream.",
+    "Leave-one-family-out re-applies the same aggregation without that family; it is a counterfactual of the aggregation rule, not a retrained system."
+  ],
+  "audit_sample": {
+    "file": "e2e_audit_sample_seed43.jsonl",
+    "n": 40,
+    "design": "up to 5 rows per (label, verdict), rng seed 42"
+  },
+  "input_sha256": "18fac754f59b873eb8ffa0069b91b76104500ba84355cd82fad63276fc25371b",
+  "input": "results/graph_replay/replay_evidence_seed43.csv",
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "source": {
+    "python_source_sha256": "acef8ba660bea9872f59f5d0cb3cafb36e72bf4e903d4a5efb12afdd1123c9ab",
+    "n_files": 86,
+    "git_head_of_snapshot": "9022a9feb65effa32779207e32458c0d37e9bb61"
+  }
+}

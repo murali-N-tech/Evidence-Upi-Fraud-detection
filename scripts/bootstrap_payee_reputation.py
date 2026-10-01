@@ -41,15 +41,19 @@ def bootstrap(conn, reset: bool) -> None:
         with conn:
             conn.execute("DELETE FROM payee_reputation")
             conn.execute("DELETE FROM payee_payers")
+            conn.execute("DELETE FROM payment_observations")
             conn.execute("DELETE FROM payee_reports")
         print("  cleared existing reputation data")
 
     rows = conn.execute(
         """
-        SELECT user_id, upi_id, merchant, amount, timestamp
+        SELECT id, user_id, upi_id, counterparty_upi_id, merchant, amount, timestamp,
+               fingerprint, validation_reasons
         FROM statement_transactions
-        WHERE UPPER(COALESCE(txn_type, 'DEBIT')) = 'DEBIT' AND amount > 0
-        ORDER BY COALESCE(timestamp, created_at)
+        WHERE UPPER(COALESCE(direction, txn_type, 'DEBIT')) = 'DEBIT' AND amount > 0
+          AND timestamp IS NOT NULL
+          AND COALESCE(validation_reasons, '') NOT LIKE '%timestamp_in_future%'
+        ORDER BY timestamp
         """
     ).fetchall()
 
@@ -59,10 +63,14 @@ def bootstrap(conn, reset: bool) -> None:
     conn.execute("BEGIN")
     try:
         for r in rows:
-            key = payee_key(r["upi_id"], r["merchant"])
+            key = payee_key(r["counterparty_upi_id"] or r["upi_id"], r["merchant"])
             if not key:
                 continue
-            record_payment(
+            # The row's fingerprint (or its row id, for rows stored before
+            # fingerprints) is the observation key, so rows the importer
+            # already recorded - and earlier runs of this script - are not
+            # counted a second time.
+            counted = record_payment(
                 vpa=key,
                 payer_id=r["user_id"],
                 amount=r["amount"],
@@ -70,8 +78,10 @@ def bootstrap(conn, reset: bool) -> None:
                 display_name=r["merchant"],
                 conn=conn,
                 autocommit=False,
+                provenance="STATEMENT_OBSERVED",
+                observation_key=r["fingerprint"] or f"legacy-row:{r['id']}",
             )
-            seen += 1
+            seen += int(bool(counted))
         conn.commit()
     except Exception:
         conn.rollback()

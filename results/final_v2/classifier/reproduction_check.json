@@ -1,0 +1,88 @@
+{
+  "reported_file_rows": 30000,
+  "same_test_row_indices": true,
+  "max_abs_prob_diff_vs_reported_predictions_per_row": 1.1102230246251565e-16,
+  "comparison": {
+    "pr_auc_average_precision": {
+      "reported": 0.7326003276779426,
+      "reproduced": 0.7326003276779426
+    },
+    "roc_auc": {
+      "reported": 0.9899739404550086,
+      "reproduced": 0.9899739404550086
+    },
+    "recall": {
+      "reported": 0.780281690140845,
+      "reproduced": 0.780281690140845
+    },
+    "precision": {
+      "reported": 0.48426573426573427,
+      "reproduced": 0.48426573426573427
+    },
+    "f1": {
+      "reported": 0.5976267529665588,
+      "reproduced": 0.5976267529665588
+    },
+    "fpr": {
+      "reported": 0.009951087873165796,
+      "reproduced": 0.009951087873165796
+    },
+    "brier": {
+      "reported": 0.0055535156476493736,
+      "reproduced": 0.0055535156476493736
+    },
+    "brier_skill_score": {
+      "reported": 0.5250687993002229,
+      "reproduced": 0.5250687993002229
+    }
+  },
+  "confusion_reported": {
+    "tn": 29350,
+    "fp": 295,
+    "fn": 78,
+    "tp": 277
+  },
+  "confusion_reproduced": {
+    "tn": 29350,
+    "fp": 295,
+    "fn": 78,
+    "tp": 277
+  },
+  "identical_confusion": true,
+  "max_abs_metric_diff": 0.0,
+  "threshold_frozen": 0.1123,
+  "threshold_rederived_on_validation": 0.1122651497549468,
+  "threshold_rederived_rounded": 0.1123,
+  "threshold_matches": true,
+  "validation_note": {
+    "frozen_validation_confusion_at_full_precision_threshold": {
+      "tn": 17610,
+      "fp": 177,
+      "fn": 54,
+      "tp": 159
+    },
+    "validation_confusion_at_stored_threshold_0.1123": {
+      "tn": 17610,
+      "fp": 177,
+      "fn": 55,
+      "tp": 158
+    },
+    "validation_confusion_at_full_precision_threshold_recomputed": {
+      "tn": 17610,
+      "fp": 177,
+      "fn": 54,
+      "tp": 159
+    },
+    "test_confusion_at_full_precision_threshold": {
+      "tn": 29349,
+      "fp": 296,
+      "fn": 78,
+      "tp": 277
+    },
+    "rows_between_thresholds": {
+      "validation": 1,
+      "test": 1
+    },
+    "reading": "models/metrics_v2.json records validation results at the full-precision threshold; the stored and served threshold is the 4-d.p. value 0.1123, at which the reported test results were computed. One validation fraud row and one test legitimate row lie between the two values."
+  }
+}

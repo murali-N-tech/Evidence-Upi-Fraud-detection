@@ -1,0 +1,339 @@
+[
+  {
+    "seed": 42,
+    "kind": "repeat_merchant",
+    "row_index": 24996,
+    "txn_id": "t024996",
+    "time": "2026-03-04 10:09:11",
+    "label": 0,
+    "scenario": "legitimate",
+    "amount": 2223.89,
+    "payer": "payer1044",
+    "payee": "7602830710@axl",
+    "before": {
+      "pair_edge": {
+        "payments": 5,
+        "first_at": "2026-01-09T14:12:38.000000",
+        "last_at": "2026-02-22T16:20:28.000000"
+      },
+      "payee_aggregate": {
+        "distinct_payers": 1,
+        "repeat_payers": 1,
+        "payments": 5,
+        "arrival_first": "2026-01-09T14:12:38.000000",
+        "arrival_last": "2026-01-09T14:12:38.000000"
+      },
+      "payee_reputation": {
+        "payment_count": 5,
+        "first_seen": "2026-01-09T14:12:38.000000",
+        "last_seen": "2026-02-22T16:20:28.000000"
+      },
+      "graph_view": {
+        "available": true,
+        "component_size": 9571,
+        "arrival_span_days": 0.0,
+        "shared_payer_peak": null,
+        "overlap_ratio": null,
+        "position_findings": [],
+        "shape_findings": []
+      },
+      "observations_in_store": 24996
+    },
+    "assessment": {
+      "risk": 0,
+      "coverage": 96,
+      "evidence_level": "FULL",
+      "verdict": "APPROVE",
+      "payee_status": "PAID_OFTEN",
+      "agreement": {
+        "facts": [],
+        "bonus": 0,
+        "observed_by": {}
+      },
+      "families": {
+        "address_and_qr": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "address_integrity"
+          ]
+        },
+        "link_safety": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "link_reputation"
+          ]
+        },
+        "payee_history": {
+          "available": true,
+          "score": 0,
+          "facts": []
+        },
+        "amount_context": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "amount_absolute"
+          ]
+        },
+        "stated_intent": {
+          "available": false,
+          "score": null,
+          "facts": []
+        },
+        "message_pressure": {
+          "available": false,
+          "score": null,
+          "facts": []
+        },
+        "relationship": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "payee_familiarity"
+          ]
+        },
+        "payer_behaviour": {
+          "available": true,
+          "score": 0,
+          "facts": []
+        },
+        "ml_classifier": {
+          "available": true,
+          "score": 0,
+          "facts": []
+        },
+        "graph": {
+          "available": true,
+          "score": 0,
+          "facts": []
+        }
+      },
+      "findings": [
+        "mostly_digits"
+      ],
+      "classifier_family_note": "the live prototype serves an earlier, non-reported model in this family; the V2 re-aggregation used in the report of this row is in e2e_v2_rows_seed42"
+    },
+    "identical_to_replay_record": true,
+    "after": {
+      "pair_edge": {
+        "payments": 6,
+        "first_at": "2026-01-09T14:12:38.000000",
+        "last_at": "2026-03-04T10:09:11.000000"
+      },
+      "payee_aggregate": {
+        "distinct_payers": 1,
+        "repeat_payers": 1,
+        "payments": 6,
+        "arrival_first": "2026-01-09T14:12:38.000000",
+        "arrival_last": "2026-01-09T14:12:38.000000"
+      },
+      "payee_reputation": {
+        "payment_count": 6,
+        "first_seen": "2026-01-09T14:12:38.000000",
+        "last_seen": "2026-03-04T10:09:11.000000"
+      },
+      "graph_view": {
+        "available": true,
+        "component_size": 9571,
+        "arrival_span_days": 0.0,
+        "shared_payer_peak": null,
+        "overlap_ratio": null,
+        "position_findings": [],
+        "shape_findings": []
+      },
+      "observations_in_store": 24997
+    }
+  },
+  {
+    "seed": 42,
+    "kind": "mule",
+    "row_index": 57636,
+    "txn_id": "t057636",
+    "time": "2026-05-25 00:11:11.569000",
+    "label": 1,
+    "scenario": "mule_collection",
+    "amount": 1404.77,
+    "payer": "payer1970",
+    "payee": "latha.iyer335@axl",
+    "before": {
+      "pair_edge": null,
+      "payee_aggregate": {
+        "distinct_payers": 16,
+        "repeat_payers": 0,
+        "payments": 16,
+        "arrival_first": "2026-05-23T08:58:43.000000",
+        "arrival_last": "2026-05-24T18:14:27.185000"
+      },
+      "payee_reputation": {
+        "payment_count": 16,
+        "first_seen": "2026-05-23T08:58:43.000000",
+        "last_seen": "2026-05-24T18:14:27.185000"
+      },
+      "graph_view": {
+        "available": true,
+        "component_size": 13825,
+        "arrival_span_days": 1.3859280671296297,
+        "shared_payer_peak": 16,
+        "overlap_ratio": null,
+        "position_findings": [],
+        "shape_findings": [
+          "16 different people have paid this address and none paid twice.",
+          "All 16 payers arrived within 1 days.",
+          "Averaging 11.54 payments a day from new payers."
+        ]
+      },
+      "observations_in_store": 57636
+    },
+    "assessment": {
+      "risk": 99,
+      "coverage": 100,
+      "evidence_level": "FULL",
+      "verdict": "BLOCK",
+      "payee_status": "NEW_TO_USER_BUT_OBSERVED",
+      "agreement": {
+        "facts": [
+          "hour_anomaly",
+          "payee_familiarity",
+          "payee_shape",
+          "stated_purpose"
+        ],
+        "bonus": 14,
+        "observed_by": {
+          "hour_anomaly": [
+            "payer_behaviour"
+          ],
+          "payee_familiarity": [
+            "payer_behaviour"
+          ],
+          "payee_shape": [
+            "payee_history"
+          ],
+          "stated_purpose": [
+            "stated_intent"
+          ]
+        }
+      },
+      "families": {
+        "address_and_qr": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "address_integrity"
+          ]
+        },
+        "link_safety": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "link_reputation"
+          ]
+        },
+        "payee_history": {
+          "available": true,
+          "score": 82,
+          "facts": [
+            "payee_shape"
+          ]
+        },
+        "amount_context": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "amount_absolute"
+          ]
+        },
+        "stated_intent": {
+          "available": true,
+          "score": 44,
+          "facts": [
+            "stated_purpose"
+          ]
+        },
+        "message_pressure": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "message_coercion"
+          ]
+        },
+        "relationship": {
+          "available": true,
+          "score": 0,
+          "facts": [
+            "payee_familiarity"
+          ]
+        },
+        "payer_behaviour": {
+          "available": true,
+          "score": 33,
+          "facts": [
+            "hour_anomaly",
+            "payee_familiarity"
+          ]
+        },
+        "ml_classifier": {
+          "available": true,
+          "score": 11,
+          "facts": [
+            "payee_familiarity",
+            "payee_shape"
+          ]
+        },
+        "graph": {
+          "available": true,
+          "score": 0,
+          "facts": []
+        }
+      },
+      "findings": [
+        "graph_payee_shape",
+        "investment_to_stranger",
+        "message_authority",
+        "message_fear",
+        "message_urgency",
+        "message_weak_cues_only",
+        "ml_behavioural_risk",
+        "mule_pattern",
+        "payer_behaviour",
+        "streams_agree"
+      ],
+      "classifier_family_note": "the live prototype serves an earlier, non-reported model in this family; the V2 re-aggregation used in the report of this row is in e2e_v2_rows_seed42"
+    },
+    "identical_to_replay_record": true,
+    "after": {
+      "pair_edge": {
+        "payments": 1,
+        "first_at": "2026-05-25T00:11:11.569000",
+        "last_at": "2026-05-25T00:11:11.569000"
+      },
+      "payee_aggregate": {
+        "distinct_payers": 17,
+        "repeat_payers": 0,
+        "payments": 17,
+        "arrival_first": "2026-05-23T08:58:43.000000",
+        "arrival_last": "2026-05-25T00:11:11.569000"
+      },
+      "payee_reputation": {
+        "payment_count": 17,
+        "first_seen": "2026-05-23T08:58:43.000000",
+        "last_seen": "2026-05-25T00:11:11.569000"
+      },
+      "graph_view": {
+        "available": true,
+        "component_size": 13825,
+        "arrival_span_days": 1.6336639930555554,
+        "shared_payer_peak": 17,
+        "overlap_ratio": null,
+        "position_findings": [],
+        "shape_findings": [
+          "17 different people have paid this address and none paid twice.",
+          "All 17 payers arrived within 2 days.",
+          "Averaging 10.41 payments a day from new payers."
+        ]
+      },
+      "observations_in_store": 57637
+    }
+  }
+]

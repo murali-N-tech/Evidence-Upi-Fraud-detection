@@ -1,0 +1,53 @@
+{
+  "modules": 43,
+  "tests": 820,
+  "passed": 820,
+  "failed": 0,
+  "skipped": 0,
+  "warnings": 6,
+  "pytest_time_s": 170.1,
+  "collected_total": 820,
+  "environment": "project machine, Python 3.10.12, pytest 9.1.1, scikit-learn 1.7.2, numpy 2.2.6, pandas 2.3.3",
+  "keyword_coverage": [
+    {
+      "Concern": "thresholds",
+      "Modules mentioning it": 13,
+      "Mentions": 49
+    },
+    {
+      "Concern": "missing / unavailable evidence",
+      "Modules mentioning it": 24,
+      "Mentions": 125
+    },
+    {
+      "Concern": "graph / components",
+      "Modules mentioning it": 13,
+      "Mentions": 156
+    },
+    {
+      "Concern": "verdicts",
+      "Modules mentioning it": 15,
+      "Mentions": 86
+    },
+    {
+      "Concern": "corroboration",
+      "Modules mentioning it": 7,
+      "Mentions": 35
+    },
+    {
+      "Concern": "strict time boundary (before=)",
+      "Modules mentioning it": 9,
+      "Mentions": 46
+    },
+    {
+      "Concern": "JSON",
+      "Modules mentioning it": 11,
+      "Mentions": 145
+    },
+    {
+      "Concern": "serialisation",
+      "Modules mentioning it": 1,
+      "Mentions": 5
+    }
+  ]
+}

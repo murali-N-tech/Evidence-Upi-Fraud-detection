@@ -1,0 +1,6 @@
+Scenario (synthetic),Test fraud,Detected (TP),Missed (FN),Recall,Median probability,Mean probability
+Social engineering,182,120,62,0.6593,0.2838,0.3705
+Mule collection,80,68,12,0.8500,0.4309,0.4380
+Account takeover,73,69,4,0.9452,0.8892,0.7859
+Card testing,20,20,0,1.0000,0.9876,0.8679
+Legitimate (false alarms),29645,—,—,FPR 0.00995 (295 FP),0.000041,0.0059

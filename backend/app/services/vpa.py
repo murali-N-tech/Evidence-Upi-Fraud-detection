@@ -187,10 +187,18 @@ class VpaAnalysis:
 
 
 def normalise_vpa(value: str) -> str:
-    """Lower-case, strip whitespace and unicode-normalise. NFKC folds the
-    look-alike characters that make two different strings render the same."""
-    text = unicodedata.normalize("NFKC", (value or "").strip())
-    return text.lower()
+    """The lookup key for a payee identifier.
+
+    Delegates to ``backend.app.ingestion.identity`` - the single normaliser
+    shared with statement ingestion - so an address stored from a statement
+    and the same address scanned from a QR always produce the same key. A
+    well-formed UPI ID comes back canonical; anything else gets the same
+    formatting-level cleanup (NFKC, invisible characters, quotes, case) and
+    is otherwise left as it was, never repaired into a valid-looking address.
+    """
+    from backend.app.ingestion.identity import clean_identifier, normalize_upi_id
+
+    return normalize_upi_id(value) or clean_identifier(value or "")
 
 
 def canonical(text: str) -> str:
@@ -344,8 +352,9 @@ def analyse_vpa(value: str) -> VpaAnalysis:
         )
 
     # 5. Weak structural signals.
-    digits = sum(ch.isdigit() for ch in result.local)
-    if len(result.local) >= 8 and digits / len(result.local) > 0.6:
+    from backend.app.ingestion.identity import is_phone_style
+
+    if is_phone_style(result.local):
         result.findings.append(
             VpaFinding("mostly_digits", "info",
                        "The address is mostly digits, so the name tells you nothing.")

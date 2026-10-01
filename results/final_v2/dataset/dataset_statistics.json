@@ -1,0 +1,135 @@
+{
+  "splits": [
+    {
+      "Split": "All",
+      "Total": 120000,
+      "Legitimate": 118581,
+      "Fraud": 1419,
+      "Fraud %": "1.1825"
+    },
+    {
+      "Split": "Train",
+      "Total": 72000,
+      "Legitimate": 71149,
+      "Fraud": 851,
+      "Fraud %": "1.1819"
+    },
+    {
+      "Split": "Validation",
+      "Total": 18000,
+      "Legitimate": 17787,
+      "Fraud": 213,
+      "Fraud %": "1.1833"
+    },
+    {
+      "Split": "Test",
+      "Total": 30000,
+      "Legitimate": 29645,
+      "Fraud": 355,
+      "Fraud %": "1.1833"
+    }
+  ],
+  "scenarios": [
+    {
+      "Scenario": "Social engineering",
+      "Generator share": "50%",
+      "Realised count (all)": 734,
+      "Realised share (all fraud)": "51.73%",
+      "Test count": 182,
+      "Test share": "51.27%"
+    },
+    {
+      "Scenario": "Mule collection",
+      "Generator share": "22%",
+      "Realised count (all)": 278,
+      "Realised share (all fraud)": "19.59%",
+      "Test count": 80,
+      "Test share": "22.54%"
+    },
+    {
+      "Scenario": "Account takeover",
+      "Generator share": "20%",
+      "Realised count (all)": 296,
+      "Realised share (all fraud)": "20.86%",
+      "Test count": 73,
+      "Test share": "20.56%"
+    },
+    {
+      "Scenario": "Card testing",
+      "Generator share": "8%",
+      "Realised count (all)": 111,
+      "Realised share (all fraud)": "7.82%",
+      "Test count": 20,
+      "Test share": "5.63%"
+    }
+  ],
+  "simulated_payers": 2000,
+  "fingerprint": {
+    "dataset_version": "v2",
+    "rows": 120000,
+    "fraud_rate": 0.012,
+    "users": 2000,
+    "seed": 42,
+    "v2_seed_offset": 10000,
+    "dataset_v2_sha256": "e1a26e15589b9f2450db913d5a8091ae68d8e10c4f81865d71df520a0cc8461d",
+    "dataset_v1_sha256": "c890ba4a3cc28c8bd151ce812d9940e3a5d4eeef9b4d27f05c0c734c79cfe8ac",
+    "corpus_sha256": "e5cf37f089c1bc820d48138c59908d76ab9614d3c2c7655990483b8d58abf23a",
+    "coercion_weights_sha256": "558a966a777607393e250adcb1617e397955c14d0594238705f43ba7ae90940e",
+    "features": [
+      "amount",
+      "amount_over_user_avg",
+      "is_night",
+      "hours_from_usual",
+      "seconds_since_last_txn",
+      "txns_last_hour",
+      "txns_today_over_avg",
+      "payee_is_new",
+      "payee_age_days",
+      "payee_distinct_payers",
+      "payee_repeat_ratio",
+      "payee_history_available",
+      "prior_payments_to_payee",
+      "days_since_first_payment_to_payee",
+      "relationship_available",
+      "arrival_span_days",
+      "lifespan_days",
+      "payments_per_day",
+      "component_size",
+      "shared_payer_peak",
+      "overlap_ratio",
+      "graph_available",
+      "msg_authority",
+      "msg_urgency",
+      "msg_fear",
+      "msg_pay_request",
+      "msg_credential_request",
+      "msg_secrecy",
+      "msg_remote_control",
+      "msg_verify_payment",
+      "msg_lure",
+      "msg_contact_offline",
+      "msg_coercion_probability",
+      "msg_coercion_score",
+      "msg_weak_cues_only",
+      "msg_length_chars",
+      "msg_word_count",
+      "msg_digit_ratio",
+      "msg_uppercase_ratio",
+      "message_available",
+      "link_present",
+      "link_suspicious_score",
+      "link_brand_conflict",
+      "intent_stated",
+      "intent_is_refund_or_asked",
+      "intent_payee_mismatch",
+      "payee_is_phone_address"
+    ]
+  },
+  "payee_history_hidden_rows": 29376,
+  "payee_history_hidden_share": 0.2448,
+  "fraud_rate_hidden": 0.017293028322440087,
+  "fraud_rate_visible": 0.010052524717514125,
+  "message_available_share": 0.5483083333333333,
+  "intent_stated_share": 0.421125,
+  "graph_available_share": 0.7552
+}

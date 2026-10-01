@@ -1,0 +1,570 @@
+{
+  "what": "Chronological replay validation. Tests 1-7 and 10 were checked online at every payment against an independent shadow model; 8 and 9 by an independent rebuild.",
+  "seed": 44,
+  "n_transactions": 60000,
+  "order": "assess at t from state < t, then record_payment (confirm) - never the reverse",
+  "tests": {
+    "10_store_contains_only_earlier_payments": {
+      "checked": 60000,
+      "violations": 0,
+      "pass": true
+    },
+    "1_first_pair_is_new": {
+      "checked": 60000,
+      "violations": 0,
+      "pass": true
+    },
+    "2_prior_pair_count_matches_earlier_rows": {
+      "checked": 60000,
+      "violations": 0,
+      "pass": true
+    },
+    "3_distinct_payers_only_prior": {
+      "checked": 60000,
+      "violations": 0,
+      "pass": true
+    },
+    "7_unobserved_payee_graph_unavailable_not_zero": {
+      "checked": 12296,
+      "violations": 0,
+      "pass": true
+    },
+    "4_arrival_window_only_prior": {
+      "checked": 47704,
+      "violations": 0,
+      "pass": true
+    },
+    "5_component_is_pre_payment": {
+      "checked": 47704,
+      "violations": 0,
+      "pass": true
+    },
+    "6_position_finding_only_when_gates_hold": {
+      "checked": 47704,
+      "violations": 0,
+      "pass": true
+    },
+    "8_independent_rebuild_prior_only_identical": {
+      "checked": 60,
+      "violations": 0,
+      "pass": true
+    },
+    "9a_earlier_observations_not_rewritten": {
+      "checked": 30000,
+      "violations": 0,
+      "pass": true
+    }
+  },
+  "all_pass": true,
+  "test8_detail": [
+    {
+      "i": 369,
+      "txn_id": "t000369",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 782,
+      "txn_id": "t000782",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 1188,
+      "txn_id": "t001188",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 1977,
+      "txn_id": "t001977",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 2854,
+      "txn_id": "t002854",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 6757,
+      "txn_id": "t006757",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 8004,
+      "txn_id": "t008004",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9448,
+      "txn_id": "t009448",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9657,
+      "txn_id": "t009657",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9828,
+      "txn_id": "t009828",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9857,
+      "txn_id": "t009857",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9894,
+      "txn_id": "t009894",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9929,
+      "txn_id": "t009929",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9979,
+      "txn_id": "t009979",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 9995,
+      "txn_id": "t009995",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 10011,
+      "txn_id": "t010011",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 10130,
+      "txn_id": "t010130",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 10255,
+      "txn_id": "t010255",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 11314,
+      "txn_id": "t011314",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 13308,
+      "txn_id": "t013308",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 15224,
+      "txn_id": "t015224",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 15317,
+      "txn_id": "t015317",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 15452,
+      "txn_id": "t015452",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 15715,
+      "txn_id": "t015715",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 16269,
+      "txn_id": "t016269",
+      "is_fraud": 1,
+      "scenario": "account_takeover",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 17596,
+      "txn_id": "t017596",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 22724,
+      "txn_id": "t022724",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 23129,
+      "txn_id": "t023129",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 23800,
+      "txn_id": "t023800",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 25619,
+      "txn_id": "t025619",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 25835,
+      "txn_id": "t025835",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 26465,
+      "txn_id": "t026465",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 29207,
+      "txn_id": "t029207",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 29614,
+      "txn_id": "t029614",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 34004,
+      "txn_id": "t034004",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 36481,
+      "txn_id": "t036481",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 40257,
+      "txn_id": "t040257",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 40451,
+      "txn_id": "t040451",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 41134,
+      "txn_id": "t041134",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 42215,
+      "txn_id": "t042215",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 42827,
+      "txn_id": "t042827",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 43946,
+      "txn_id": "t043946",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 45859,
+      "txn_id": "t045859",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 45923,
+      "txn_id": "t045923",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 46905,
+      "txn_id": "t046905",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 48892,
+      "txn_id": "t048892",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 49481,
+      "txn_id": "t049481",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 51513,
+      "txn_id": "t051513",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 51579,
+      "txn_id": "t051579",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 51897,
+      "txn_id": "t051897",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 52540,
+      "txn_id": "t052540",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 53139,
+      "txn_id": "t053139",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 53570,
+      "txn_id": "t053570",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 54263,
+      "txn_id": "t054263",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 54416,
+      "txn_id": "t054416",
+      "is_fraud": 1,
+      "scenario": "mule_collection",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 54848,
+      "txn_id": "t054848",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 57742,
+      "txn_id": "t057742",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 58431,
+      "txn_id": "t058431",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 59770,
+      "txn_id": "t059770",
+      "is_fraud": 0,
+      "scenario": "legitimate",
+      "identical": true,
+      "diffs": []
+    },
+    {
+      "i": 59924,
+      "txn_id": "t059924",
+      "is_fraud": 1,
+      "scenario": "social_engineering",
+      "identical": true,
+      "diffs": []
+    }
+  ],
+  "test9a_detail": {
+    "rows_before_midpoint": 30000,
+    "identical_in_final_store": 30000,
+    "final_store_rows": 60000,
+    "fresh_store_rows_at_end": 60000,
+    "pass": true
+  },
+  "test9b_power_probe": {
+    "sampled": 60,
+    "differs_when_future_visible": 60,
+    "share": 1.0,
+    "reading": "share of sampled payments whose assessment would change if the shared store contained the future; shows the boundary is material"
+  },
+  "sample_design": "stratified: fraud, graph-position rows, PAID_OFTEN legit, UNKNOWN legit, BLOCK, any; rng seed 821",
+  "seconds": 99.2,
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.2",
+    "scipy": "1.15.3",
+    "joblib": "1.6.0"
+  },
+  "source": {
+    "python_source_sha256": "acef8ba660bea9872f59f5d0cb3cafb36e72bf4e903d4a5efb12afdd1123c9ab",
+    "n_files": 86,
+    "git_head_of_snapshot": "9022a9feb65effa32779207e32458c0d37e9bb61"
+  }
+}

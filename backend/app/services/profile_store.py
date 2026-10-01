@@ -77,6 +77,50 @@ def _ensure_schema(conn: sqlite3.Connection) -> None:
         conn.execute(
             "ALTER TABLE statement_transactions ADD COLUMN time_known INTEGER NOT NULL DEFAULT 1"
         )
+    # Canonical-ingestion columns. Additive: rows stored before them keep
+    # working and read these as NULL.
+    for name, decl in (
+        ("direction", "TEXT"),                 # DEBIT / CREDIT / NULL (unknown)
+        ("counterparty_name", "TEXT"),
+        ("counterparty_upi_id", "TEXT"),       # normalize_upi_id() output only
+        ("transaction_id", "TEXT"),
+        ("source_provider", "TEXT"),
+        ("source_format", "TEXT"),
+        ("confidence", "REAL"),
+        ("validation_status", "TEXT"),         # VALID / PARTIAL
+        ("validation_reasons", "TEXT"),
+        ("fingerprint", "TEXT"),
+        # Bank-statement adapters (backend/app/ingestion/providers).
+        ("identity_state", "TEXT"),            # EXACT_VPA / VPA_ONLY / NAME_ONLY / UNKNOWN
+        ("timestamp_confidence", "TEXT"),
+        ("payment_method", "TEXT"),
+        ("transaction_type", "TEXT"),
+        ("counterparty_bank_code", "TEXT"),
+        ("balance", "REAL"),
+        ("extraction_source", "TEXT"),
+        ("counterparty_identifier", "TEXT"),   # kept even when not a complete VPA
+        ("identifier_type", "TEXT"),           # COMPLETE_VPA / PARTIAL_VPA_FRAGMENT / ...
+        ("name_source", "TEXT"),
+        ("name_confidence", "REAL"),
+        ("upi_confidence", "REAL"),
+        ("narration", "TEXT"),                 # reconstructed narration (user's own)
+    ):
+        if name not in columns:
+            conn.execute(f"ALTER TABLE statement_transactions ADD COLUMN {name} {decl}")
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS statement_imports (
+            statement_id TEXT PRIMARY KEY,
+            user_id      TEXT NOT NULL,
+            created_at   TEXT NOT NULL,
+            status       TEXT NOT NULL,      -- COMPLETE / PARTIAL / FAILED
+            report_json  TEXT NOT NULL       -- counts only, never row contents
+        )
+        """
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS ix_imports_user ON statement_imports(user_id, created_at)"
+    )
     conn.execute(
         """
         CREATE TABLE IF NOT EXISTS behavior_profiles (
@@ -132,27 +176,97 @@ def _ensure_schema(conn: sqlite3.Connection) -> None:
     # re-upload inserted the whole file again. Measured: three inserts of the
     # same NULL-reference row produced three rows under the old index and one
     # under this one.
-    try:
-        conn.execute(
-            """
-            CREATE UNIQUE INDEX IF NOT EXISTS ux_stmt_tx_v2
-            ON statement_transactions(
-                user_id,
-                COALESCE(timestamp, ''),
-                amount,
-                COALESCE(merchant, ''),
-                COALESCE(reference_number, '')
-            )
-            """
-        )
-        # The v1 index can only mask the v2 one's job; keep the table's own
-        # dedupe rule in one place.
-        conn.execute("DROP INDEX IF EXISTS ux_stmt_tx")
-    except sqlite3.IntegrityError:
-        pass
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS ix_stmt_user_upi "
+        "ON statement_transactions(user_id, counterparty_upi_id)"
+    )
+    # The dedupe rule is now the fingerprint (backend/app/ingestion/dedupe.py).
+    # ux_stmt_tx_v2 keyed on (time, amount, merchant, reference) and so merged
+    # two different payees paid the same amount in the same minute, and
+    # silently dropped the second of two genuinely identical payments.
+    conn.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS ux_stmt_fingerprint "
+        "ON statement_transactions(user_id, fingerprint) WHERE fingerprint IS NOT NULL"
+    )
+    conn.execute("DROP INDEX IF EXISTS ux_stmt_tx_v2")
+    conn.execute("DROP INDEX IF EXISTS ux_stmt_tx")
 
     conn.commit()
     return conn
+
+
+_STMT_COLUMNS = (
+    "statement_id", "user_id", "timestamp", "amount", "merchant", "upi_id",
+    "status", "reference_number", "source_type", "raw_line", "txn_type",
+    "time_known", "created_at", "direction", "counterparty_name",
+    "counterparty_upi_id", "transaction_id", "source_provider", "source_format",
+    "confidence", "validation_status", "validation_reasons", "fingerprint",
+    "identity_state", "timestamp_confidence", "payment_method", "transaction_type",
+    "counterparty_bank_code", "balance", "extraction_source",
+    "counterparty_identifier", "identifier_type", "name_source", "name_confidence",
+    "upi_confidence", "narration",
+)
+
+
+def insert_statement_rows(
+    user_id: str,
+    statement_id: str,
+    source_type: str,
+    transactions: list[dict[str, Any]],
+    conn: sqlite3.Connection | None = None,
+) -> list[int]:
+    """Insert rows; return the positions (in `transactions`) actually stored.
+
+    A row whose fingerprint is already stored for this user is the same
+    transaction imported again and is skipped. The returned list is what the
+    caller may count as NEW observations - which is how re-uploading a
+    statement is kept from inflating payee history.
+
+    `raw_line` is no longer written. The canonical fields carry everything
+    the system uses; keeping the statement's raw text only kept private
+    content around for no purpose.
+    """
+    from backend.app.ingestion.dedupe import fingerprint_dicts
+
+    # Copies: the caller's dicts are not ours to annotate.
+    transactions = [dict(tx) for tx in transactions]
+    fingerprint_dicts(user_id, transactions)
+    created_at = datetime.utcnow().isoformat()
+    own = conn is None
+    conn = conn or _get_connection()
+    placeholders = ", ".join("?" for _ in _STMT_COLUMNS)
+    sql = (f"INSERT OR IGNORE INTO statement_transactions ({', '.join(_STMT_COLUMNS)}) "
+           f"VALUES ({placeholders})")
+    inserted: list[int] = []
+    try:
+        with conn:
+            for position, tx in enumerate(transactions):
+                txn_type = str(tx.get("txn_type") or tx.get("direction") or "UNKNOWN").upper()
+                cur = conn.execute(sql, (
+                    statement_id, user_id, tx.get("timestamp"), float(tx.get("amount") or 0),
+                    tx.get("merchant"), tx.get("upi_id"), tx.get("status"),
+                    tx.get("reference_number"), source_type, None, txn_type,
+                    1 if tx.get("time_known", True) else 0, created_at,
+                    tx.get("direction", txn_type if txn_type in ("DEBIT", "CREDIT") else None),
+                    tx.get("counterparty_name"), tx.get("counterparty_upi_id"),
+                    tx.get("transaction_id"), tx.get("source_provider"),
+                    tx.get("source_format"), tx.get("confidence"),
+                    tx.get("validation_status"), tx.get("validation_reasons"),
+                    tx["fingerprint"],
+                    tx.get("identity_state"), tx.get("timestamp_confidence"),
+                    tx.get("payment_method"), tx.get("transaction_type"),
+                    tx.get("counterparty_bank_code"), tx.get("balance"),
+                    tx.get("extraction_source"),
+                    tx.get("counterparty_identifier"), tx.get("identifier_type"),
+                    tx.get("name_source"), tx.get("name_confidence"),
+                    tx.get("upi_confidence"), tx.get("narration"),
+                ))
+                if cur.rowcount:
+                    inserted.append(position)
+    finally:
+        if own:
+            conn.close()
+    return inserted
 
 
 def save_statement_transactions(
@@ -161,72 +275,76 @@ def save_statement_transactions(
     source_type: str,
     transactions: list[dict[str, Any]],
 ) -> int:
-    created_at = datetime.utcnow().isoformat()
+    """Kept for existing callers. Returns how many rows were newly stored."""
+    return len(insert_statement_rows(user_id, statement_id, source_type, transactions))
+
+
+def save_import_report(user_id: str, statement_id: str, status: str,
+                       report: dict[str, Any]) -> None:
     conn = _get_connection()
-    before = conn.execute("SELECT COUNT(*) FROM statement_transactions").fetchone()[0]
+    try:
+        with conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO statement_imports "
+                "(statement_id, user_id, created_at, status, report_json) VALUES (?,?,?,?,?)",
+                (statement_id, user_id, datetime.utcnow().isoformat(), status,
+                 json.dumps(report)),
+            )
+    finally:
+        conn.close()
 
-    with conn:
-        conn.executemany(
-            """
-            INSERT OR IGNORE INTO statement_transactions (
-                statement_id,
-                user_id,
-                timestamp,
-                amount,
-                merchant,
-                upi_id,
-                status,
-                reference_number,
-                source_type,
-                raw_line,
-                txn_type,
-                time_known,
-                created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            [
-                (
-                    statement_id,
-                    user_id,
-                    tx.get("timestamp"),
-                    float(tx.get("amount", 0)),
-                    tx.get("merchant"),
-                    tx.get("upi_id"),
-                    tx.get("status"),
-                    tx.get("reference_number"),
-                    source_type,
-                    tx.get("raw_line"),
-                    str(tx.get("txn_type") or "DEBIT").upper(),
-                    1 if tx.get("time_known", True) else 0,
-                    created_at,
-                )
-                for tx in transactions
-            ],
-        )
 
-    after = conn.execute("SELECT COUNT(*) FROM statement_transactions").fetchone()[0]
-    conn.close()
-    # Rows already present are skipped, so report what was actually stored.
-    return after - before
+def latest_import(user_id: str, conn: sqlite3.Connection | None = None) -> dict[str, Any] | None:
+    """The user's most recent import report (counts only), or None."""
+    own = conn is None
+    conn = conn or _get_connection()
+    try:
+        try:
+            row = conn.execute(
+                "SELECT statement_id, created_at, status, report_json FROM statement_imports "
+                "WHERE user_id = ? ORDER BY created_at DESC, rowid DESC LIMIT 1",
+                (user_id,),
+            ).fetchone()
+        except sqlite3.OperationalError:
+            return None
+    finally:
+        if own:
+            conn.close()
+    if row is None:
+        return None
+    return {"statement_id": row["statement_id"], "created_at": row["created_at"],
+            "status": row["status"], "report": json.loads(row["report_json"])}
 
 
 def get_user_transactions(user_id: str) -> pd.DataFrame:
+    """This user's stored statement rows - their own data only.
+
+    A row flagged `timestamp_in_future` comes back with a NULL timestamp, so
+    no temporal consumer (velocity, profile hours, payee dates) can read a
+    date that cannot have happened before the import. The raw statement line
+    is not returned.
+    """
     conn = _get_connection()
     query = """
         SELECT
             statement_id,
             user_id,
-            timestamp,
+            CASE WHEN COALESCE(validation_reasons, '') LIKE '%timestamp_in_future%'
+                 THEN NULL ELSE timestamp END AS timestamp,
             amount,
             merchant,
             upi_id,
             status,
             reference_number,
             source_type,
-            raw_line,
             txn_type,
             time_known,
-            created_at
+            created_at,
+            direction,
+            counterparty_name,
+            counterparty_upi_id,
+            validation_status,
+            validation_reasons
         FROM statement_transactions
         WHERE user_id = ?
         ORDER BY COALESCE(timestamp, created_at)

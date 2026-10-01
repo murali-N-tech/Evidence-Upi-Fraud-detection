@@ -1,0 +1,5 @@
+Split,Total,Legitimate,Fraud,Fraud %
+All,120000,118581,1419,1.1825
+Train,72000,71149,851,1.1819
+Validation,18000,17787,213,1.1833
+Test,30000,29645,355,1.1833

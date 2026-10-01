@@ -58,7 +58,9 @@ def evaluate_personalized_risk(
         # time, and callers pass a local clock; utcnow() shifted the night
         # window by the UTC offset, so a 02:30 IST payment read as 21:00 and
         # the night rule did not fire.
-        event_time = pd.Timestamp.now()
+        from backend.app.core.clock import now_app
+
+        event_time = pd.Timestamp(now_app())
 
     if not profile or profile.get("transaction_count", 0) == 0:
         baseline_risk = 35 if amount > 10000 else 20

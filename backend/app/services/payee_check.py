@@ -31,6 +31,7 @@ findings from the same family do not.
 
 from __future__ import annotations
 
+import dataclasses
 import sqlite3
 from typing import Any, Optional
 
@@ -45,6 +46,7 @@ from backend.app.services.payee_reputation import (
 )
 from backend.app.services.scam_link import analyse_links, brand_conflicts_with_payee
 from backend.app.services.graph_cache import graph_view
+from backend.app.services.payee_history import classify, payee_history
 from backend.app.services.evidence import (
     Evidence,
     Fact,
@@ -65,6 +67,7 @@ from backend.app.core.verdict import (
     verdict_from_score,
 )
 from backend.app.services.personalized_risk_service import evaluate_personalized_risk
+from backend.app.services.velocity import prepayment_velocity
 from backend.app.services.upi_qr import parse_upi_target
 from backend.app.services.vpa import VpaFinding, graded, total_weight
 from backend.ml.features import (
@@ -434,6 +437,46 @@ HEADLINES = {
 }
 
 
+# Below this many OTHER payers, the payee's aggregate amount and time fields
+# would describe identifiable individual payments ("one person paid Rs 1000 on
+# 18 June"), so they are withheld from the response. Counts stay - "observed
+# across N payers" is the aggregate the privacy model allows. The scoring
+# above still reads the full aggregates internally.
+MIN_OTHER_PAYERS_FOR_DETAIL = 5
+
+
+def _public_reputation(reputation, payee_hist) -> dict[str, Any]:
+    data = reputation.as_dict()
+    own = 1 if (payee_hist is not None and payee_hist.paid_before) else 0
+    others = max(0, int(data.get("distinct_payers") or 0) - own)
+    if 0 < others < MIN_OTHER_PAYERS_FOR_DETAIL:
+        for field_name in ("display_name", "first_seen", "last_seen", "age_days",
+                           "payment_count", "total_amount", "mean_amount", "amount_spread"):
+            data[field_name] = None
+        data["detail_withheld"] = True
+    return data
+
+
+def _relationship_message(history) -> str:
+    sources = history.provenance
+    where = []
+    if sources.get("STATEMENT_OBSERVED"):
+        where.append("your imported statement")
+    if sources.get("SYSTEM_CONFIRMED"):
+        where.append("payments you confirmed in this app")
+    if sources.get("OTHER_OBSERVED"):
+        where.append("earlier records")
+    times = "once" if history.payment_count == 1 else f"{history.payment_count} times"
+    text = f"You have paid this payee {times} before"
+    if history.last_payment_at is not None:
+        text += f", most recently on {history.last_payment_at:%d %b %Y}"
+    if where:
+        # Observed, not verified: a statement line is what the payer's own
+        # document says, not a confirmation from the payment network.
+        text += f" (seen in {' and '.join(where)})"
+    return text + "."
+
+
 def check_payee(
     payload: str,
     payer_id: Optional[str] = None,
@@ -485,6 +528,40 @@ def check_payee(
 def _assemble(payload, qr, key, conn, payer_id, amount, intent, message,
               profile, history, timestamp, velocity) -> dict[str, Any]:
     reputation = assess_payee(key, conn=conn) if key else None
+
+    import pandas as _pd
+
+    # The decision time. Everything "previous" below means strictly before it.
+    from backend.app.core.clock import app_iso, now_app
+
+    # IST wall time, whatever zone the server or the caller used (clock.py):
+    # statement history is IST, so T must be too.
+    when = app_iso(timestamp) if timestamp else None
+    when = when or now_app().isoformat(timespec="microseconds")
+
+    # The payer's own history with this payee - ONE source for the
+    # relationship family, the payee status, and the V1/V2 model inputs.
+    payee_hist = (payee_history(payer_id, key, before=when, conn=conn)
+                  if (payer_id and key) else None)
+    standing = classify(
+        payer_id, key, qr.payee_name, payee_hist,
+        payee_known_globally=bool(reputation and reputation.distinct_payers > 0),
+        conn=conn,
+    )
+    if reputation and standing["history_state"] not in ("NO_HISTORY", "HISTORY_FOUND",
+                                                          "NOT_SIGNED_IN"):
+        # "No payment history" must not be said when the real reason is an
+        # import that failed or was only partly readable. Same weight - the
+        # score is unchanged - only the explanation is corrected.
+        reputation.findings = [
+            dataclasses.replace(
+                f, message=("No verified payment history for this exact address. "
+                            if standing["history_state"] == "PARTIAL_IDENTITY" else
+                            "No payment history was found for this address. ")
+                           + standing["message"])
+            if f.code == "payee_unseen" else f
+            for f in reputation.findings
+        ]
 
     findings: list[VpaFinding] = list(qr.all_findings)
     if reputation:
@@ -582,9 +659,6 @@ def _assemble(payload, qr, key, conn, payer_id, amount, intent, message,
     link_score = min(100, links.score + (conflict.scored() if conflict else 0))
 
     # ── The payer's own behaviour, and the classifier ───────────────────────
-    import pandas as _pd
-
-    when = timestamp or _pd.Timestamp.now().isoformat()
     payer = _payer_evidence(
         profile=profile,
         history=history,
@@ -593,9 +667,19 @@ def _assemble(payload, qr, key, conn, payer_id, amount, intent, message,
         timestamp=when,
         upi_id=qr.payee_vpa,
     )
-    seen_before = None
-    if payer_id and key:
-        seen_before = payer_has_paid(key, payer_id, conn=conn)
+    # V1's payee_is_new input, read from payee_history - the same object the
+    # relationship family and the V2 builder use - rather than computed again.
+    seen_before = payee_hist.v1_inputs()["payer_seen_payee_before"] if payee_hist else None
+
+    # Velocity, computed strictly from what precedes this request. Until now
+    # this endpoint passed nothing, so the model received the parameter
+    # defaults - 9,000 seconds, 0 payments in the hour, 1 today - on every
+    # call, while /predict computed them properly. One artefact was being fed
+    # two different input semantics depending on which door the request came
+    # through. An explicit `velocity` from the caller still wins, which is what
+    # the demo harness and the tests rely on.
+    if not velocity:
+        velocity = prepayment_velocity(history, when)
 
     ml = _ml_evidence(
         amount=effective_amount,
@@ -668,17 +752,26 @@ def _assemble(payload, qr, key, conn, payer_id, amount, intent, message,
     # contributes is certainty: knowing the relationship is established, or
     # knowing for a fact that it is not, is worth more to the reader than any
     # number it could produce.
-    if seen_before is None:
+    if payee_hist is None:
         evidence.append(unavailable(
             Family.RELATIONSHIP,
             "No authenticated payer, so this payer's own history with this "
             "payee cannot be read."))
-    else:
+    elif payee_hist.paid_before:
         evidence.append(Evidence(
             family=Family.RELATIONSHIP, available=True, score=0, severity="info",
             facts={Fact.PAYEE_FAMILIARITY},
-            code="relationship_established" if seen_before else "relationship_new",
-            message=("You have paid this payee before." if seen_before
+            code="relationship_established",
+            message=_relationship_message(payee_hist),
+        ))
+    else:
+        uncertain = standing["history_state"] in ("PARTIAL_IMPORT", "IDENTITY_UNAVAILABLE",
+                                                   "IMPORT_ERROR", "PARTIAL_IDENTITY")
+        evidence.append(Evidence(
+            family=Family.RELATIONSHIP, available=True, score=0, severity="info",
+            facts={Fact.PAYEE_FAMILIARITY},
+            code="relationship_unconfirmed" if uncertain else "relationship_new",
+            message=(standing["message"] if uncertain
                      else "This is your first payment to this payee. That is "
                           "ordinary on its own."),
         ))
@@ -773,7 +866,11 @@ def _assemble(payload, qr, key, conn, payer_id, amount, intent, message,
         "payee": {
             "vpa": qr.payee_vpa,
             "key": key,
-            "display_name": qr.payee_name or (reputation.display_name if reputation else None),
+            # The QR's own name, or a stored one only when the aggregate is
+            # public; a single other payer's statement label is theirs.
+            "display_name": qr.payee_name or (
+                _public_reputation(reputation, payee_hist).get("display_name")
+                if reputation else None),
             "valid": bool(qr.vpa_analysis and qr.vpa_analysis.valid),
             "handle_type": qr.vpa_analysis.handle_type if qr.vpa_analysis else "unknown",
             "impersonates": qr.vpa_analysis.impersonates if qr.vpa_analysis else None,
@@ -785,7 +882,13 @@ def _assemble(payload, qr, key, conn, payer_id, amount, intent, message,
             "merchant_code": qr.merchant_code,
             "signed": qr.signed,
         },
-        "reputation": reputation.as_dict() if reputation else None,
+        "reputation": _public_reputation(reputation, payee_hist) if reputation else None,
+        # The caller's own relationship with this payee (their data only) and
+        # why it looks the way it does.
+        "payee_status": standing["payee_status"],
+        "history_state": {"state": standing["history_state"],
+                          "message": standing["message"]},
+        "payee_history": payee_hist.as_dict() if payee_hist else None,
         "decision": decision,
         "headline": HEADLINES[decision],
         "intent": intent_result.as_dict(),

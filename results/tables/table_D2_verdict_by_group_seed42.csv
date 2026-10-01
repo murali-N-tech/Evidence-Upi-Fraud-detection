@@ -1,0 +1,11 @@
+group,slice,n,APPROVE,WARN,STEP_UP,BLOCK
+account_takeover,full_stream,144,25.0,19.44,28.47,27.08
+card_testing,full_stream,58,86.21,13.79,0.0,0.0
+legitimate,full_stream,59280,46.31,30.57,10.55,12.56
+mule_collection,full_stream,158,5.7,21.52,18.99,53.8
+social_engineering,full_stream,360,3.06,10.0,16.94,70.0
+account_takeover,test_last25pct,41,34.15,21.95,21.95,21.95
+card_testing,test_last25pct,11,90.91,9.09,0.0,0.0
+legitimate,test_last25pct,14828,66.02,21.58,5.42,6.98
+mule_collection,test_last25pct,50,4.0,20.0,22.0,54.0
+social_engineering,test_last25pct,70,0.0,4.29,8.57,87.14
